@@ -23,6 +23,6 @@ export const GET = async ({ url, locals }) => {
         throw redirect(303, '/');
     }
 
-    throw redirect(303, '/profile');
+    throw redirect(303, '/dashboard');
 
 };
