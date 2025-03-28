@@ -51,39 +51,26 @@
 	};
 </script>
 
-<div class="m-10 mx-auto overflow-x-auto select-none">
-	<table class="table-xs table">
+<div class=" sm:m-auto md:h-[80%] md:w-[70%]">
+	<table class="table-xs table-pin-rows table-pin-cols w-[80%] m-5">
 		<thead>
 			<tr>
-				<th>id</th>
-				<th>details</th>
-				<th>cost</th>
-				<th>sold_price</th>
+				<td class="hidden md:flex">id</td>
+				<td>details</td>
+				<!-- <td>cost</td> -->
+				<td>price</td>
 			</tr>
 		</thead>
-		<tbody>
+
+		<tbody class="overflow-hidden">
 			{#each products as product}
-				<tr>
-					<th class="text-ellipsis">{product.id}</th>
+				<tr onclick={()=>{}} class=" cursor-pointer">
+					<td class="hidden md:flex">{product.id}</td>
 					<td>{JSON.stringify(product.details)}</td>
-					<td>{product.cost}</td>
+					<!-- <td>{product.cost}</td> -->
 					<td>{product.sold_price}</td>
 				</tr>
 			{/each}
 		</tbody>
-		<tfoot>
-			<tr>
-				<th>id</th>
-				<th>details</th>
-				<th>cost</th>
-				<th>sold_price</th>
-			</tr>
-		</tfoot>
 	</table>
-</div>
-
-<div class="join mx-auto">
-	<button class="join-item btn" onclick={prevPage}>«</button>
-	<button class="join-item btn">Page {pageNumber + 1}</button>
-	<button class="join-item btn" onclick={nextPage}>»</button>
 </div>

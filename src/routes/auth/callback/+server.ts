@@ -15,6 +15,9 @@ export const GET = async ({ url, locals }) => {
 
     locals.supabase.auth.setSession(session);
 
+    console.log(session);
+    
+
 
     const { error: user_not_found, data } = await locals.supabase.from('user').select().eq('email', user?.email).single();
 
