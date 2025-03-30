@@ -1,30 +1,40 @@
 <script lang="ts">
 	import { afterUpdate, onMount } from 'svelte';
+	import ClientForm from '$lib/components/ClientForm.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 	import QrReader from '$lib/components/QrReader.svelte';
+	//icons
 	import QrIcon from '$lib/icons/qr.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
-	import Alert from '$lib/components/Alert.svelte';
+	import TimesIcon from '$lib/icons/times.icon.svelte';
+	//interfaces
+	import type { Client } from '$lib/interfaces/client.interface.js';
+	import type { Product } from '$lib/interfaces/product.interface.js';
 
 	export let data;
 
 	let { supabase } = data;
 
 	let qrReader: QrReader;
-	let isScanning = false;
-	let readedValue = '';
-	let error: { message: string } | null = null;
-
+	let productsTableRef: HTMLDivElement;
 	let alertRef: Alert;
 
+	let readedValue = '';
+	let isScanning = false;
 	let total = 0;
 
-	let products: Array<{
-		id: string;
-		description: string;
-		size: string;
-		sold_price: number;
-	}> = [];
-	let productsTable: HTMLDivElement;
+	let products: Array<Product> = [
+		// {
+		// 	id: 'id',
+		// 	description:
+		// 		'description description description description description description description descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription',
+		// 	size: 'NewBorn NewBorn NewBorn NewBorn NewBorn',
+		// 	sold_price: 100
+		// }
+	];
+
+	let clientData: Client;
+	let clientSetted: boolean;
 
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
 		if (products.find((element) => element.id == readedValue)) {
@@ -43,7 +53,7 @@
 					alertRef.showAlert('producto no encontrado', 'alert-error');
 					break;
 				default:
-					error = { message: JSON.stringify(_fetchError) };
+					alertRef.showAlert(JSON.stringify(_fetchError), 'alert-error');
 					break;
 			}
 		}
@@ -73,10 +83,16 @@
 		return { data, error };
 	};
 
-	const generateSell = async () => {};
+	const removeElement = (elementId: string) => {
+		products = products.filter((item) => item.id != elementId);
+	};
+
+	const generateSell = async () => {
+		console.log(clientData);
+	};
 
 	afterUpdate(() => {
-		if (productsTable) productsTable.scrollTop = productsTable.scrollHeight;
+		if (productsTableRef) productsTableRef.scrollTop = productsTableRef.scrollHeight;
 	});
 
 	onMount(() => {
@@ -87,7 +103,9 @@
 <div class=" flex h-screen w-screen flex-col gap-5">
 	<Alert bind:this={alertRef} />
 
-	{#if !isScanning}
+	{#if !clientSetted}
+		<ClientForm bind:client={clientData} bind:setted={clientSetted} />
+	{:else if !isScanning && clientSetted}
 		<div
 			class="mt-10 flex w-[90%] flex-col items-center gap-4 self-center rounded-2xl border border-[#e5e5e5] p-5"
 		>
@@ -101,29 +119,36 @@
 		</div>
 		<div
 			class="flex max-h-[500px] w-[90%] flex-col items-center gap-4 self-center overflow-y-auto rounded-2xl border border-[#e5e5e5] p-5"
-			bind:this={productsTable}
+			bind:this={productsTableRef}
 			id="products-table"
 		>
 			<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
-
-			<table class="table">
-				<thead>
+			<table class=" table-xs table-pin-rows table-pin-cols w-[90%] break-words">
+				<thead class="d border-b">
 					<tr>
-						<th>ID</th>
+						<!-- <th>ID</th> -->
 						<th>Description</th>
 						<th>Size</th>
 						<th>Price</th>
+						<th></th>
 					</tr>
 				</thead>
 
 				<tbody>
 					{#if products.length > 0}
-						{#each products as product, index}
-							<tr onclick={() => {}} class=" cursor-pointer">
-								<td>{index}</td>
-								<td>{product.description}</td>
-								<td>{product.size}</td>
-								<td>{product.sold_price}</td>
+						{#each products as product (product.id)}
+							<tr class=" cursor-pointer">
+								<!-- <td class="text-ellipsis">{product.id}</td> -->
+								<td class="">{product.description}</td>
+								<td class="">{product.size}</td>
+								<td class="">{product.sold_price}</td>
+								<td
+									><button
+										onclick={() => {
+											removeElement(product.id);
+										}}><TimesIcon /></button
+									></td
+								>
 							</tr>
 						{/each}
 					{:else}{/if}
@@ -145,18 +170,10 @@
 		</div>
 	{/if}
 
-	<div class="m-auto flex flex-col gap-5 self-center justify-self-center p-2">
-		<QrReader
-			bind:this={qrReader}
-			bind:isScanning
-			bind:readedValue
-			on:qr-detected={QrDetectedHandler}
-		/>
-
-		{#if isScanning}
-			<button onclick={qrReader.stopScanner} class="btn self-center border border-[#e5e5e5]">
-				atras</button
-			>
-		{/if}
-	</div>
+	<QrReader
+		bind:this={qrReader}
+		bind:isScanning
+		bind:readedValue
+		on:qr-detected={QrDetectedHandler}
+	/>
 </div>

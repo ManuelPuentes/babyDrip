@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { onMount } from 'svelte';
 
 	export let data;
@@ -10,13 +11,7 @@
 	let pageNumber = 0;
 	let maxPageNumber = 0;
 
-	let products: Array<{
-		id: string;
-		description: string;
-		size: string;
-		sold_price: number;
-		cost: number;
-	}> = [];
+	let products: Array<Product> = [];
 
 	const nextPage = () => {
 		pageNumber + 1 < maxPageNumber ? pageNumber++ : pageNumber;

@@ -48,4 +48,9 @@
 	});
 </script>
 
-<div id="qr-reader" class={$$restProps.class}></div>
+<div class="flex flex-col self-center m-auto gap-4">
+	<div id="qr-reader" class={$$restProps.class}></div>
+	{#if isScanning}
+		<button onclick={stopScanner} class="btn self-center border border-[#e5e5e5]"> atras</button>
+	{/if}
+</div>
