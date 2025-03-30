@@ -78,6 +78,7 @@
 			.from('products')
 			.select('id,  description, size, sold_price')
 			.eq('id', productId)
+			.eq('on_stock', true)
 			.single();
 
 		return { data, error };
