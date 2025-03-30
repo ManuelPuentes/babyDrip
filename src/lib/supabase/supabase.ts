@@ -34,6 +34,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      client: {
+        Row: {
+          created_at: string
+          id: string
+          lastname: string
+          name: string
+          phone: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lastname: string
+          name: string
+          phone: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lastname?: string
+          name?: string
+          phone?: number
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           cost: number
@@ -41,6 +65,7 @@ export type Database = {
           description: string
           id: string
           on_stock: boolean
+          sell_id: string | null
           size: string
           sold_at: string | null
           sold_price: number
@@ -51,6 +76,7 @@ export type Database = {
           description?: string
           id?: string
           on_stock?: boolean
+          sell_id?: string | null
           size?: string
           sold_at?: string | null
           sold_price?: number
@@ -61,11 +87,59 @@ export type Database = {
           description?: string
           id?: string
           on_stock?: boolean
+          sell_id?: string | null
           size?: string
           sold_at?: string | null
           sold_price?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_sell_id_fkey"
+            columns: ["sell_id"]
+            isOneToOne: false
+            referencedRelation: "sell"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sell: {
+        Row: {
+          client: string
+          created_at: string
+          id: string
+          seller: string
+          total: number
+        }
+        Insert: {
+          client: string
+          created_at?: string
+          id?: string
+          seller: string
+          total: number
+        }
+        Update: {
+          client?: string
+          created_at?: string
+          id?: string
+          seller?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sell_client_fkey"
+            columns: ["client"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sell_seller_fkey"
+            columns: ["seller"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user: {
         Row: {
