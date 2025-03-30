@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { Html5Qrcode } from 'html5-qrcode';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	let scanner: Html5Qrcode | null = null;
 	export let isScanning: boolean = true;
 	export let readedValue: any | null = null;
+
+	const dispatch = createEventDispatcher();
 
 	const scannerConfig = {
 		fps: 1,
@@ -15,6 +17,7 @@
 	const onScanSuccess = async (decodedText: string) => {
 		try {
 			readedValue = decodedText;
+			dispatch('qr-detected', { readedValue });
 			stopScanner();
 		} catch (error) {
 			stopScanner();

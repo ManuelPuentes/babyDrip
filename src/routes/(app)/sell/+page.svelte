@@ -3,6 +3,7 @@
 	import QrReader from '$lib/components/QrReader.svelte';
 	import QrIcon from '$lib/icons/qr.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 
 	export let data;
 
@@ -11,32 +12,68 @@
 	let qrReader: QrReader;
 	let isScanning = false;
 	let readedValue = '';
+	let error: { message: string } | null = null;
+
+	let alertRef: Alert;
+
 	let total = 0;
 
-	let products: Array<{ id: number; description: string; size: string; price: number }> = [];
+	let products: Array<{
+		id: string;
+		description: string;
+		size: string;
+		sold_price: number;
+	}> = [];
 	let productsTable: HTMLDivElement;
 
-	$: total = products.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
+	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
+		if (products.find((element) => element.id == readedValue)) {
+			alertRef.showAlert('este elemento ya esta facturado', 'alert-warning');
+			return;
+		}
 
-	const generateSell = async () => {
+		const { error: _fetchError, data } = await fetchProductData(readedValue);
+
+		if (_fetchError) {
+			switch (_fetchError.code) {
+				case '22P02':
+					alertRef.showAlert('QR invalido', 'alert-error');
+					break;
+				case 'PGRST116':
+					alertRef.showAlert('producto no encontrado', 'alert-error');
+					break;
+				default:
+					error = { message: JSON.stringify(_fetchError) };
+					break;
+			}
+		}
+
+		if (!data) return;
+
 		products.push({
-			id: products.length + 1,
-			description: 'description',
-			size: 'size',
-			price: 1000
+			id: data.id,
+			description: data.description,
+			size: data.size,
+			sold_price: data.sold_price
 		});
 
 		products = products;
+		total += data.sold_price;
+
+		alertRef.showAlert('element added', 'alert-success');
 	};
 
-	const fetchProductData = async () => {
+	const fetchProductData = async (productId: string) => {
 		const { data, error } = await supabase
 			.from('products')
-			.select('id,  details, sold_price, cost')
-			.limit(1);
+			.select('id,  description, size, sold_price')
+			.eq('id', productId)
+			.single();
 
-		console.log(data);
+		return { data, error };
 	};
+
+	const generateSell = async () => {};
 
 	afterUpdate(() => {
 		if (productsTable) productsTable.scrollTop = productsTable.scrollHeight;
@@ -48,6 +85,8 @@
 </script>
 
 <div class=" flex h-screen w-screen flex-col gap-5">
+	<Alert bind:this={alertRef} />
+
 	{#if !isScanning}
 		<div
 			class="mt-10 flex w-[90%] flex-col items-center gap-4 self-center rounded-2xl border border-[#e5e5e5] p-5"
@@ -79,12 +118,12 @@
 
 				<tbody>
 					{#if products.length > 0}
-						{#each products as product}
+						{#each products as product, index}
 							<tr onclick={() => {}} class=" cursor-pointer">
-								<td>{product.id}</td>
+								<td>{index}</td>
 								<td>{product.description}</td>
 								<td>{product.size}</td>
-								<td>{product.price}</td>
+								<td>{product.sold_price}</td>
 							</tr>
 						{/each}
 					{:else}{/if}
@@ -107,7 +146,12 @@
 	{/if}
 
 	<div class="m-auto flex flex-col gap-5 self-center justify-self-center p-2">
-		<QrReader bind:this={qrReader} bind:isScanning bind:readedValue />
+		<QrReader
+			bind:this={qrReader}
+			bind:isScanning
+			bind:readedValue
+			on:qr-detected={QrDetectedHandler}
+		/>
 
 		{#if isScanning}
 			<button onclick={qrReader.stopScanner} class="btn self-center border border-[#e5e5e5]">
