@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 
 	let scanner: Html5Qrcode | null = null;
-	export let isScanning: boolean = false;
+	export let isScanning: boolean = true;
 	export let readedValue: any | null = null;
 
 	const scannerConfig = {
@@ -33,7 +33,7 @@
 		scanner.start({ facingMode: 'environment' }, scannerConfig, onScanSuccess, onScanError);
 	}
 
-	async function stopScanner() {
+	export async function stopScanner() {
 		if (scanner) {
 			await scanner.stop();
 		}
@@ -45,4 +45,4 @@
 	});
 </script>
 
-<div id="qr-reader" class="mx-auto w-full"></div>
+<div id="qr-reader" class={$$restProps.class}></div>

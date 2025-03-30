@@ -12,7 +12,8 @@
 
 	let products: Array<{
 		id: string;
-		details: JSON;
+		description: string;
+		size: string;
 		sold_price: number;
 		cost: number;
 	}> = [];
@@ -36,41 +37,46 @@
 		const limit = (pageNumber + 1) * pageSize - 1;
 		const { data, error } = await supabase
 			.from('products')
-			.select('id,  details, sold_price, cost')
+			.select('id,  description, size, sold_price, cost')
 			.eq('on_stock', true)
 			.range(offset, limit);
 
-		products = data
-			? (data as Array<{
-					id: string;
-					details: JSON;
-					sold_price: number;
-					cost: number;
-				}>)
-			: [];
+		products = data ? data : [];
 	};
 </script>
 
-<div class=" sm:m-auto md:h-[80%] md:w-[70%]">
-	<table class="table-xs table-pin-rows table-pin-cols w-[80%] m-5">
-		<thead>
-			<tr>
-				<td class="hidden md:flex">id</td>
-				<td>details</td>
-				<!-- <td>cost</td> -->
-				<td>price</td>
-			</tr>
-		</thead>
+<div
+	class="over min:w-[90%] mt-10 flex h-[80%] flex-col justify-center gap-4 self-center overflow-hidden rounded-2xl border border-[#e5e5e5] p-2 select-none"
+>
+	<h1 class=" text-center text-2xl font-semibold">Sistema de Inventario</h1>
 
-		<tbody class="overflow-hidden">
-			{#each products as product}
-				<tr onclick={()=>{}} class=" cursor-pointer">
-					<td class="hidden md:flex">{product.id}</td>
-					<td>{JSON.stringify(product.details)}</td>
-					<!-- <td>{product.cost}</td> -->
-					<td>{product.sold_price}</td>
+	<div class="min-h-[85%] overflow-hidden">
+		<table class="table-xs table-pin-rows table-pin-cols m-5">
+			<thead class="border-b">
+				<tr>
+					<td>ID</td>
+					<td>Description</td>
+					<td>Size</td>
+					<td>Price</td>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+
+			<tbody>
+				{#each products as product, index}
+					<tr onclick={() => {}} class=" cursor-pointer hover:bg-red-300">
+						<td>{index}</td>
+						<td>{product.description}</td>
+						<td>{product.size}</td>
+						<td>{product.sold_price}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="join flex justify-center">
+		<button class="join-item btn" onclick={prevPage}>«</button>
+		<button class="join-item btn">{pageNumber + 1}</button>
+		<button class="join-item btn" onclick={nextPage}>»</button>
+	</div>
 </div>

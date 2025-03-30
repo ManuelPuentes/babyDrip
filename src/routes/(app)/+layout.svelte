@@ -3,9 +3,9 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	import HomeIcon from '../../icons/home.icon.svelte';
-	import SearchIcon from '../../icons/search.icon.svelte';
-	import CartIcon from '../../icons/cart.icon.svelte';
+	import HomeIcon from '$lib/icons/home.icon.svelte';
+	import SearchIcon from '$lib/icons/search.icon.svelte';
+	import CartIcon from '$lib/icons/cart.icon.svelte';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
