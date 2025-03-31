@@ -1,11 +1,13 @@
 export interface Product {
-
-    id: string
-    cost?: number
+    id?: string
     created_at?: string
-    description?: string
-    on_stock?: boolean
-    size?: string
-    sold_at?: string
+    sell_id?: string | null
+    printed?: boolean
+
+    cost?: number
     sold_price?: number
+    size?: string
+    description?: string
+    stored_at?: string | null
+
 }

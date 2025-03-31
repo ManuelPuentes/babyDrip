@@ -76,7 +76,7 @@
 		alertRef.showAlert('element added', 'alert-success');
 	};
 
-	const removeElement = (elementId: string) => {
+	const removeElement = (elementId: string | undefined) => {
 		products = products.filter((item) => item.id != elementId);
 	};
 
