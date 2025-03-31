@@ -64,33 +64,33 @@ export type Database = {
           created_at: string
           description: string
           id: string
-          on_stock: boolean
+          printed: boolean
           sell_id: string | null
           size: string
-          sold_at: string | null
           sold_price: number
+          stored_at: string | null
         }
         Insert: {
           cost?: number
           created_at?: string
           description?: string
           id?: string
-          on_stock?: boolean
+          printed?: boolean
           sell_id?: string | null
           size?: string
-          sold_at?: string | null
           sold_price?: number
+          stored_at?: string | null
         }
         Update: {
           cost?: number
           created_at?: string
           description?: string
           id?: string
-          on_stock?: boolean
+          printed?: boolean
           sell_id?: string | null
           size?: string
-          sold_at?: string | null
           sold_price?: number
+          stored_at?: string | null
         }
         Relationships: [
           {
@@ -98,6 +98,13 @@ export type Database = {
             columns: ["sell_id"]
             isOneToOne: false
             referencedRelation: "sell"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_stored_at_fkey"
+            columns: ["stored_at"]
+            isOneToOne: false
+            referencedRelation: "warehouse"
             referencedColumns: ["id"]
           },
         ]
@@ -153,6 +160,27 @@ export type Database = {
         Update: {
           email?: string
           id?: string
+        }
+        Relationships: []
+      }
+      warehouse: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          printed: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          printed?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          printed?: boolean
         }
         Relationships: []
       }

@@ -9,7 +9,7 @@ export const getProductsPaginatedData = async (pageNumber: number, supabase: Sup
     const { data, error } = await supabase
         .from('products')
         .select('id,  description, size, sold_price, cost')
-        .eq('on_stock', true)
+        .is('sell_id', null)
         .range(offset, limit);
 
 

@@ -2,7 +2,7 @@ import type { Client } from "$lib/interfaces/client.interface";
 import type { Product } from "$lib/interfaces/product.interface";
 import { type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "$lib/supabase/supabase";
-import { createClient } from "./createCLient.api";
+import { createClient } from "./createClient.api";
 import { createSell } from "./createSell.api";
 
 export const proccessSell = async (supabase: SupabaseClient, data: generateSell,) => {
