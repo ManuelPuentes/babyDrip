@@ -1,4 +1,3 @@
-<!-- Alert.svelte -->
 <script lang="ts">
 	type AlertType = 'alert-success' | 'alert-warning' | 'alert-error' | 'alert-info';
 
@@ -8,7 +7,11 @@
 	export let duration = 3000;
 	export let show = false;
 
-	export function showAlert(msg: string, alertType: AlertType = 'alert-info', alertDuration = 3000) {
+	export function showAlert(
+		msg: string,
+		alertType: AlertType = 'alert-info',
+		alertDuration = 3000
+	) {
 		message = msg;
 		type = alertType;
 		duration = alertDuration;
@@ -21,7 +24,10 @@
 </script>
 
 {#if show}
-	<div transition:fade class={`alert ${type} alert-soft absolute w-full rounded-none`}>
+	<div
+		transition:fade
+		class={`${$$restProps.class} alert ${type} alert-soft absolute w-full rounded-none`}
+	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
