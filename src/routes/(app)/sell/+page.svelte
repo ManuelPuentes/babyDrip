@@ -10,10 +10,12 @@
 	//interfaces
 	import type { Client } from '$lib/interfaces/client.interface.js';
 	import type { Product } from '$lib/interfaces/product.interface.js';
+	import { getProduct } from '$lib/api/getProduct.api.js';
+	import { proccessSell } from '$lib/api/processSell.api.js';
 
 	export let data;
 
-	let { supabase } = data;
+	let { supabase, session, user } = data;
 
 	let qrReader: QrReader;
 	let productsTableRef: HTMLDivElement;
@@ -42,7 +44,7 @@
 			return;
 		}
 
-		const { error: _fetchError, data } = await fetchProductData(readedValue);
+		const { error: _fetchError, data } = await getProduct(supabase, readedValue);
 
 		if (_fetchError) {
 			switch (_fetchError.code) {
@@ -73,23 +75,21 @@
 		alertRef.showAlert('element added', 'alert-success');
 	};
 
-	const fetchProductData = async (productId: string) => {
-		const { data, error } = await supabase
-			.from('products')
-			.select('id,  description, size, sold_price')
-			.eq('id', productId)
-			.eq('on_stock', true)
-			.single();
-
-		return { data, error };
-	};
-
 	const removeElement = (elementId: string) => {
 		products = products.filter((item) => item.id != elementId);
 	};
 
-	const generateSell = async () => {
-		console.log(clientData);
+	const postSell = async () => {
+		if (user?.email) {
+			await proccessSell(supabase, {
+				client: clientData,
+				products,
+				sellerEmail: user.email,
+				total
+			});
+
+			products = [];
+		}
 	};
 
 	afterUpdate(() => {
@@ -164,7 +164,7 @@
 				</p>
 			{/if}
 
-			<button onclick={generateSell} class="btn border border-[#e5e5e5]">
+			<button onclick={postSell} class="btn border border-[#e5e5e5]">
 				<CartIcon />
 				Comprar</button
 			>

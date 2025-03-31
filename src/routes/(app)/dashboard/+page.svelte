@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api.js';
 	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { onMount } from 'svelte';
 
@@ -20,23 +21,15 @@
 		pageNumber > 0 ? pageNumber-- : pageNumber;
 	};
 
-	$: getProductsPaginatedData(pageNumber);
+	$: fetchProductsData(pageNumber);
 
 	onMount(async () => {
 		const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
 		maxPageNumber = count ? Math.ceil(count / pageSize) : 0;
 	});
 
-	const getProductsPaginatedData = async (pageNumber: number) => {
-		const offset = pageNumber * pageSize;
-		const limit = (pageNumber + 1) * pageSize - 1;
-		const { data, error } = await supabase
-			.from('products')
-			.select('id,  description, size, sold_price, cost')
-			.eq('on_stock', true)
-			.range(offset, limit);
-
-		products = data ? data : [];
+	const fetchProductsData = async (pageNumber: number) => {
+		products = await getProductsPaginatedData(pageNumber, supabase);
 	};
 </script>
 

@@ -3,9 +3,9 @@
 	import CheckIcon from '$lib/icons/check.icon.svelte';
 
 	export let client: Client = {
-		name: '',
-		lastname: '',
-		phone: null
+		name: 'manuel',
+		lastname: 'puentes',
+		phone: 1234567890
 	};
 
 	export let setted: boolean = false;
@@ -21,7 +21,7 @@
 	<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
 	<p class="text-xs">Datos del cliente</p>
 
-	<form action="" class="flex flex-col p-4">
+	<form class="flex flex-col p-4">
 		<label for="">Nombre</label>
 		<input
 			type="input"
