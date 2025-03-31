@@ -49,7 +49,6 @@ const updateProducts = async (supabase: SupabaseClient<Database>, products: Arra
 
     const result = await supabase.from('products').update({
         sell_id: sellId,
-        on_stock: false
     })
         .in('id', producstsId)
 

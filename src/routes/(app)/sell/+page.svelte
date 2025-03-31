@@ -15,7 +15,7 @@
 
 	export let data;
 
-	let { supabase, session, user } = data;
+	let { supabase, user } = data;
 
 	let qrReader: QrReader;
 	let productsTableRef: HTMLDivElement;
@@ -37,6 +37,7 @@
 
 	let clientData: Client;
 	let clientSetted: boolean;
+	let proccessingSell: boolean = false;
 
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
 		if (products.find((element) => element.id == readedValue)) {
@@ -79,17 +80,27 @@
 		products = products.filter((item) => item.id != elementId);
 	};
 
-	const postSell = async () => {
-		if (user?.email) {
-			await proccessSell(supabase, {
-				client: clientData,
-				products,
-				sellerEmail: user.email,
-				total
-			});
-
-			products = [];
+	const handleSellProccess = async () => {
+		if (products.length == 0) {
+			alertRef.showAlert('cannot generate an empty bill', 'alert-error');
+			return;
 		}
+
+		if (!user?.email) return;
+
+		proccessingSell = true;
+
+		await proccessSell(supabase, {
+			client: clientData,
+			products,
+			sellerEmail: user.email,
+			total
+		});
+
+		products = [];
+		alertRef.showAlert('facturaccion exitosa', 'alert-success');
+
+		proccessingSell = false;
 	};
 
 	afterUpdate(() => {
@@ -164,10 +175,14 @@
 				</p>
 			{/if}
 
-			<button onclick={postSell} class="btn border border-[#e5e5e5]">
-				<CartIcon />
-				Comprar</button
-			>
+			{#if proccessingSell}
+				<span class="loading loading-ring loading-xl"></span>
+			{:else}
+				<button onclick={handleSellProccess} class="btn border border-[#e5e5e5]">
+					<CartIcon />
+					Comprar</button
+				>
+			{/if}
 		</div>
 	{/if}
 
