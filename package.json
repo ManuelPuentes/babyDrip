@@ -37,7 +37,6 @@
 	"dependencies": {
 		"@supabase/ssr": "^0.6.1",
 		"@supabase/supabase-js": "^2.49.1",
-		"@zxing/library": "^0.21.3",
 		"daisyui": "^5.0.9",
 		"html5-qrcode": "^2.2.7"
 	}

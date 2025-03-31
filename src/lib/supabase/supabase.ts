@@ -40,21 +40,21 @@ export type Database = {
           id: string
           lastname: string
           name: string
-          phone: number
+          phone: string
         }
         Insert: {
           created_at?: string
           id?: string
           lastname: string
           name: string
-          phone: number
+          phone: string
         }
         Update: {
           created_at?: string
           id?: string
           lastname?: string
           name?: string
-          phone?: number
+          phone?: string
         }
         Relationships: []
       }
