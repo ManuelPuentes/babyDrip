@@ -1,17 +1,10 @@
 <script lang="ts">
-	import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api.js';
 	import type { Product } from '$lib/interfaces/product.interface.js';
-	import { onMount } from 'svelte';
 
 	export let data;
-	let {
-		supabase,
-		env: { pageSize }
-	} = data;
 
+	let { warehouse, maxPageNumber, pageSize, supabase } = data;
 	let pageNumber = 0;
-	let maxPageNumber = 0;
-
 	let products: Array<Product> = [];
 
 	const nextPage = () => {
@@ -21,16 +14,21 @@
 		if (pageNumber > 0) pageNumber--;
 	};
 
-	$: fetchProductsData(pageNumber);
-
-	onMount(async () => {
-		const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
-		maxPageNumber = count ? Math.ceil(count / pageSize) : 0;
-	});
-
 	const fetchProductsData = async (pageNumber: number) => {
-		products = await getProductsPaginatedData(pageNumber, supabase);
+		const offset = pageNumber * pageSize;
+		const limit = (pageNumber + 1) * pageSize - 1;
+
+		const { data } = await supabase
+			.from('products')
+			.select('id,  description, size, sold_price, cost')
+			.is('sell_id', null)
+			.eq('stored_at', warehouse.id ?? '')
+			.range(offset, limit);
+
+		products = data ?? [];
 	};
+
+	$: fetchProductsData(pageNumber);
 </script>
 
 <div

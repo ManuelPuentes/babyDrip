@@ -1,0 +1,29 @@
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { getWarehouse } from '$lib/api/getWarehouse.api';
+import type { Warehouse } from '$lib/interfaces/warehouse.interface';
+import { PUBLIC_PAGE_SIZE } from '$env/static/public';
+
+export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
+	const { data: warehouse } = await getWarehouse(supabase, params.warehouse_id);
+
+	if (!warehouse) throw error(404, { message: 'warehouse not found' });
+
+	const { count, error: _err } = await supabase
+		.from('products')
+		.select('*', { count: 'exact', head: true })
+		.eq('stored_at', params.warehouse_id);
+
+	if (_err)
+		throw error(404, {
+			message: 'unexpected error fetching products afilliated to this warehouse'
+		});
+
+	const maxPageNumber = count ? Math.ceil(count / Number(PUBLIC_PAGE_SIZE)) : 0;
+
+	return { warehouse, maxPageNumber, pageSize: Number(PUBLIC_PAGE_SIZE) } as {
+		warehouse: Warehouse;
+		maxPageNumber: number;
+		pageSize: number;
+	};
+};
