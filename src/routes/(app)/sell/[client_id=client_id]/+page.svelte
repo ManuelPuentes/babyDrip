@@ -10,7 +10,8 @@
 	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { getProduct } from '$lib/api/getProduct.api.js';
 	import { enhance } from '$app/forms';
-	import type { QrData } from '$lib/interfaces/qr.interface.js';
+
+	import qrvalidator from '$lib/validator/qr.validator.js';
 
 	export let data;
 
@@ -46,48 +47,39 @@
 		// },
 	];
 
-	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
-		const qrData: QrData = JSON.parse(readedValue);
-
-		if (qrData.type != 'product') {
+	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
+		if (data.type != 'product') {
 			alertRef.showAlert('este QR no corresponde a un producto', 'alert-error');
 			return;
 		}
 
-		if (products.find((element) => element.id == qrData.id)) {
+		if (products.find((element) => element.id == data.id)) {
 			alertRef.showAlert('este elemento ya esta facturado', 'alert-warning');
 			return;
 		}
 
-		const { error: _fetchError, data } = await getProduct(supabase, qrData.id);
+		const { data: product } = await getProduct(supabase, data.id);
 
-		if (_fetchError) {
-			switch (_fetchError.code) {
-				case '22P02':
-					alertRef.showAlert('QR invalido', 'alert-error');
-					break;
-				case 'PGRST116':
-					alertRef.showAlert('producto no encontrado', 'alert-error');
-					break;
-				default:
-					alertRef.showAlert(JSON.stringify(_fetchError), 'alert-error');
-					break;
-			}
+		if (!product) {
+			alertRef.showAlert('producto no encontrado', 'alert-error');
+			return;
 		}
 
-		if (!data) return;
-
 		products.push({
-			id: data.id,
-			description: data.description,
-			size: data.size,
-			sold_price: data.sold_price
+			id: product.id,
+			description: product.description,
+			size: product.size,
+			sold_price: product.sold_price
 		});
 
 		products = products;
-		total += data.sold_price;
+		total += product.sold_price;
 
 		alertRef.showAlert('element added', 'alert-success');
+	};
+
+	const qrInvalidHandler = ({ detail: { error } }: CustomEvent) => {
+		alertRef.showAlert(error, 'alert-error');
 	};
 
 	const removeElement = (event: any) => {
@@ -207,6 +199,8 @@
 		bind:this={qrReader}
 		bind:isScanning
 		bind:readedValue
-		on:qr-detected={QrDetectedHandler}
+		on:qr-invalid={qrInvalidHandler}
+		on:qr-detected={qrDetectedHandler}
+		validator={qrvalidator}
 	/>
 </div>

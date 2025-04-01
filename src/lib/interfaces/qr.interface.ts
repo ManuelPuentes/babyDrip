@@ -1,7 +1,6 @@
-export interface QrData {
+export interface QrData extends Record<string, string> {
 	type: QrType;
 	id: string;
-	payload?: any;
 }
 
 export type QrType = 'warehouse' | 'product';

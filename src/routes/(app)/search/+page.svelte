@@ -1,48 +1,34 @@
 <script lang="ts">
 	import QrReader from '$lib/components/QrReader.svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import { getProduct } from '$lib/api/getProduct.api.js';
 	import { onMount } from 'svelte';
-	import type { QrData } from '$lib/interfaces/qr.interface.js';
 	import { goto } from '$app/navigation';
-	import { getWarehouse } from '$lib/api/getWarehouse.api.js';
 
-	export let data;
-
-	let { supabase } = data;
+	import qrvalidator from '$lib/validator/qr.validator.js';
 
 	let qrReader: QrReader;
 	let alertRef: Alert;
-	let readedValue = '';
 	let isScanning = true;
 
-	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
-		try {
-			const qrData: QrData = JSON.parse(readedValue);
-
-			switch (qrData.type) {
-				case 'product': {
-					const productResult = await getProduct(supabase, qrData.id);
-
-					if (!productResult.error && productResult.data)
-						await goto(`search/product/${btoa(JSON.stringify(productResult.data))}`);
-
-					break;
-				}
-
-				case 'warehouse': {
-					const wareHouseResult = await getWarehouse(supabase, qrData.id);
-					if (!wareHouseResult.error && wareHouseResult.data)
-						await goto(`search/warehouse/${btoa(JSON.stringify(wareHouseResult.data))}`);
-					break;
-				}
-				default:
-					alertRef.showAlert('este tipo de item aun no esta contemplado', 'alert-error');
-					return;
+	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
+		switch (data.type) {
+			case 'product': {
+				await goto(`search/product/${data.id}`);
+				break;
 			}
-		} catch {
-			alertRef.showAlert('Qr invalido', 'alert-error');
+
+			case 'warehouse': {
+				await goto(`search/warehouse/${data.id}`);
+				break;
+			}
+			default:
+				alertRef.showAlert('este tipo de item aun no esta contemplado', 'alert-error');
+				return;
 		}
+	};
+
+	const qrInvalidHandler = ({ detail: { error } }: CustomEvent) => {
+		alertRef.showAlert(error, 'alert-error');
 	};
 
 	onMount(() => {
@@ -54,10 +40,11 @@
 	<Alert bind:this={alertRef} />
 
 	<QrReader
+		on:qr-invalid={qrInvalidHandler}
+		on:qr-detected={qrDetectedHandler}
 		bind:this={qrReader}
 		class="w-[300px]"
 		bind:isScanning
-		bind:readedValue
-		on:qr-detected={QrDetectedHandler}
+		validator={qrvalidator}
 	/>
 </div>

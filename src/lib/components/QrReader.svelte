@@ -4,7 +4,6 @@
 
 	let scanner: Html5Qrcode | null = null;
 	export let isScanning: boolean = true;
-	export let readedValue: string | null = null;
 
 	const dispatch = createEventDispatcher();
 
@@ -14,21 +13,24 @@
 		supportedScanTypes: [0]
 	};
 
-	const onScanSuccess = async (decodedText: string) => {
-		try {
-			readedValue = decodedText;
-			dispatch('qr-detected', { readedValue });
-			stopScanner();
-		} catch {
-			stopScanner();
-		}
+	export let validator: (decodedText: string) => {
+		error?: string;
+		data?: unknown;
 	};
 
-	const onScanError = async () => {
-		if (scanner) {
-			// await scanner.stop();
+	const onScanSuccess = async (decodedText: string) => {
+		const { data, error } = validator(decodedText);
+
+		if (error) {
+			dispatch('qr-invalid', { error });
+		} else {
+			dispatch('qr-detected', { data });
 		}
+
+		stopScanner();
 	};
+
+	const onScanError = async () => {};
 
 	export async function startScanner() {
 		isScanning = true;
