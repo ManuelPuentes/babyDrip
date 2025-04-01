@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "$lib/supabase/supabase";
 import type { Product } from "$lib/interfaces/product.interface";
 
-export const load: PageServerLoad = (async ({ url, parent, params }) => {});
+export const load: PageServerLoad = (async ({ url, parent, params }) => { });
 
 export const actions: Actions = {
 

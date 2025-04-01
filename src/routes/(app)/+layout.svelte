@@ -7,6 +7,7 @@
 	import SearchIcon from '$lib/icons/search.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
 	import AddIcon from '$lib/icons/add.icon.svelte';
+	import QrIcon from '$lib/icons/qr.icon.svelte';
 
 	let { data, children } = $props();
 	let { session, supabase } = $derived(data);
@@ -47,7 +48,8 @@
 	<div class="dock shadow-sm md:hidden">
 		<a href="/add"><AddIcon />Add</a>
 		<a href="/dashboard"><HomeIcon />Home</a>
-		<a href="/"><SearchIcon />Search</a>
+		<a href="/search"><QrIcon />Search</a>
+		<!-- <a href="/"><SearchIcon />Search</a> -->
 		<a href="/sell"><CartIcon />Sell</a>
 	</div>
 </div>

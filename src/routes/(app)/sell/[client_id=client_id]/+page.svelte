@@ -10,6 +10,7 @@
 	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { getProduct } from '$lib/api/getProduct.api.js';
 	import { enhance } from '$app/forms';
+	import type { QrData } from '$lib/interfaces/qr.interface.js';
 
 	export let data;
 
@@ -46,12 +47,20 @@
 	];
 
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
-		if (products.find((element) => element.id == readedValue)) {
+
+		const qrData: QrData = JSON.parse(readedValue);
+
+		if (qrData.type != 'product') {
+			alertRef.showAlert('este QR no corresponde a un producto', 'alert-error');
+			return;
+		}
+
+		if (products.find((element) => element.id == qrData.id)) {
 			alertRef.showAlert('este elemento ya esta facturado', 'alert-warning');
 			return;
 		}
 
-		const { error: _fetchError, data } = await getProduct(supabase, readedValue);
+		const { error: _fetchError, data } = await getProduct(supabase, qrData.id);
 
 		if (_fetchError) {
 			switch (_fetchError.code) {
