@@ -1,6 +1,7 @@
 export interface Product {
     id?: string
-    created_at?: string
+    created_at?: Date
+    updated_at?: Date
     sell_id?: string | null
     printed?: boolean
 
@@ -8,6 +9,5 @@ export interface Product {
     sold_price?: number
     size?: string
     description?: string
-    stored_at?: string | null
-
+    stored_at?: string
 }

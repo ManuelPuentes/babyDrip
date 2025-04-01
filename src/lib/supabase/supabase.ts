@@ -68,7 +68,8 @@ export type Database = {
           sell_id: string | null
           size: string
           sold_price: number
-          stored_at: string | null
+          stored_at: string
+          updated_at: string
         }
         Insert: {
           cost?: number
@@ -79,7 +80,8 @@ export type Database = {
           sell_id?: string | null
           size?: string
           sold_price?: number
-          stored_at?: string | null
+          stored_at: string
+          updated_at: string
         }
         Update: {
           cost?: number
@@ -90,7 +92,8 @@ export type Database = {
           sell_id?: string | null
           size?: string
           sold_price?: number
-          stored_at?: string | null
+          stored_at?: string
+          updated_at?: string
         }
         Relationships: [
           {

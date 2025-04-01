@@ -4,7 +4,6 @@
 	import { getProduct } from '$lib/api/getProduct.api.js';
 	import { onMount } from 'svelte';
 	import type { QrData } from '$lib/interfaces/qr.interface.js';
-	import { error } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
 	import { getWarehouse } from '$lib/api/getWarehouse.api.js';
 
@@ -20,7 +19,6 @@
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
 		try {
 			const qrData: QrData = JSON.parse(readedValue);
-			console.log(qrData)
 
 			switch (qrData.type) {
 				case 'product':
@@ -41,11 +39,9 @@
 					alertRef.showAlert('este tipo de item aun no esta contemplado', 'alert-error');
 					return;
 			}
-
 		} catch (error) {
 			alertRef.showAlert('Qr invalido', 'alert-error');
 		}
-
 	};
 
 	onMount(() => {
