@@ -6,15 +6,13 @@
 	let creating = false;
 
 	export let form;
-	$: ({ formData, errors, success } = form ?? {
+	$: ({ formData, errors } = form ?? {
 		formData: {} as any,
-		errors: {} as any,
-		success: false
+		errors: {} as any
 	});
 
 	const handleSubmit = () => {
 		creating = true;
-
 		return async ({ update }: any) => {
 			let result = await update();
 			creating = false;

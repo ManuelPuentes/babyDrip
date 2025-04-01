@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { afterUpdate, onMount } from 'svelte';
-	import ClientForm from '$lib/components/ClientForm.svelte';
+	import { afterUpdate } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import QrReader from '$lib/components/QrReader.svelte';
 	//icons
@@ -8,14 +7,13 @@
 	import CartIcon from '$lib/icons/cart.icon.svelte';
 	import TimesIcon from '$lib/icons/times.icon.svelte';
 	//interfaces
-	import type { Client } from '$lib/interfaces/client.interface.js';
 	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { getProduct } from '$lib/api/getProduct.api.js';
-	import { proccessSell } from '$lib/api/processSell.api.js';
+	import { enhance } from '$app/forms';
 
 	export let data;
 
-	let { supabase, user } = data;
+	let { supabase } = data;
 
 	let qrReader: QrReader;
 	let productsTableRef: HTMLDivElement;
@@ -24,20 +22,28 @@
 	let readedValue = '';
 	let isScanning = false;
 	let total = 0;
+	let creating = false;
 
 	let products: Array<Product> = [
 		// {
 		// 	id: 'id',
-		// 	description:
-		// 		'description description description description description description description descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription',
-		// 	size: 'NewBorn NewBorn NewBorn NewBorn NewBorn',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
 		// 	sold_price: 100
-		// }
+		// },
+		// {
+		// 	id: 'id2',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id3',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
 	];
-
-	let clientData: Client;
-	let clientSetted: boolean;
-	let proccessingSell: boolean = false;
 
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
 		if (products.find((element) => element.id == readedValue)) {
@@ -76,48 +82,53 @@
 		alertRef.showAlert('element added', 'alert-success');
 	};
 
-	const removeElement = (elementId: string | undefined) => {
-		products = products.filter((item) => item.id != elementId);
-	};
-
-	const handleSellProccess = async () => {
-		if (products.length == 0) {
-			alertRef.showAlert('cannot generate an empty bill', 'alert-error');
-			return;
+	const removeElement = (event: any) => {
+		if (event.target?.parentElement?.id) {
+			const ID = event.target?.parentElement?.id;
+			products = products.filter((item) => item.id != ID);
 		}
+	};
+	export let form;
+	$: ({ errors, success } = form ?? {
+		errors: {} as any,
+		success: false
+	});
 
-		if (!user?.email) return;
+	$: {
+		if (success && alertRef) {
+			alertRef.showAlert('facturaccion exitosa!', 'alert-success');
+			products = [];
+		}
+	}
 
-		proccessingSell = true;
+	$: {
+		if (Object.keys(errors).length && alertRef) {
+			const error_msg = Object.values(errors).join('\n');
+			alertRef.showAlert(error_msg, 'alert-error');
+		}
+	}
 
-		await proccessSell(supabase, {
-			client: clientData,
-			products,
-			sellerEmail: user.email,
-			total
-		});
+	const handleSubmit = ({ formData }: any) => {
+		creating = true;
 
-		products = [];
-		alertRef.showAlert('facturaccion exitosa', 'alert-success');
+		formData.append('total', 100);
+		formData.append('products', JSON.stringify(products.map((p) => p.id)));
 
-		proccessingSell = false;
+		return async ({ update, result }: any) => {
+			let _result = await update();
+			creating = false;
+		};
 	};
 
 	afterUpdate(() => {
 		if (productsTableRef) productsTableRef.scrollTop = productsTableRef.scrollHeight;
-	});
-
-	onMount(() => {
-		return () => {};
 	});
 </script>
 
 <div class=" flex h-screen w-screen flex-col gap-5">
 	<Alert bind:this={alertRef} />
 
-	{#if !clientSetted}
-		<ClientForm bind:client={clientData} bind:setted={clientSetted} />
-	{:else if !isScanning && clientSetted}
+	{#if !isScanning}
 		<div
 			class="mt-10 flex w-[90%] flex-col items-center gap-4 self-center rounded-2xl border border-[#e5e5e5] p-5"
 		>
@@ -154,16 +165,10 @@
 								<td class="">{product.description}</td>
 								<td class="">{product.size}</td>
 								<td class="">{product.sold_price}</td>
-								<td
-									><button
-										onclick={() => {
-											removeElement(product.id);
-										}}><TimesIcon /></button
-									></td
-								>
+								<td><button onclick={removeElement} id={product.id}><TimesIcon /></button></td>
 							</tr>
 						{/each}
-					{:else}{/if}
+					{/if}
 				</tbody>
 			</table>
 
@@ -175,14 +180,16 @@
 				</p>
 			{/if}
 
-			{#if proccessingSell}
-				<span class="loading loading-ring loading-xl"></span>
-			{:else}
-				<button onclick={handleSellProccess} class="btn border border-[#e5e5e5]">
-					<CartIcon />
-					Comprar</button
-				>
-			{/if}
+			<form action="" method="post" use:enhance={handleSubmit}>
+				{#if creating}
+					<span class="loading loading-ring loading-xl"></span>
+				{:else}
+					<button class="btn border border-[#e5e5e5]" type="submit">
+						<CartIcon />
+						Comprar
+					</button>
+				{/if}
+			</form>
 		</div>
 	{/if}
 
