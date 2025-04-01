@@ -75,7 +75,7 @@ export type Database = {
 					size?: string;
 					sold_price?: number;
 					stored_at: string;
-					updated_at: string;
+					updated_at?: string;
 				};
 				Update: {
 					cost?: number;

@@ -30,6 +30,13 @@
 		}
 	}
 
+	$: {
+		if (errors && alertRef && Object.keys(errors).length) {
+			const error_msg = Object.values(errors).join('\n');
+			alertRef.showAlert(error_msg, 'alert-error');
+		}
+	}
+
 	const handleSubmit = () => {
 		creating = true;
 
@@ -61,7 +68,7 @@
 					placeholder="coste del producto"
 					pattern="[0-9]*"
 					min="9"
-					value={formData?.cost ? Number(formData.cost) : 10}
+					value={formData.cost ?? 10}
 					aria-invalid={errors?.cost ? 'true' : undefined}
 				/>
 
@@ -81,7 +88,7 @@
 					placeholder="precio de venta"
 					pattern="[0-9]*"
 					min="9"
-					value={formData?.sold_price ? Number(formData.sold_price) : 10}
+					value={formData.soldprice ?? 10}
 					aria-invalid={errors?.sold_price ? 'true' : undefined}
 				/>
 
@@ -114,7 +121,7 @@
 
 			<fieldset class="fieldset w-[100%]">
 				<select class="select validator" required name="warehouse">
-					<option disabled selected value="warehouse0">warehouse0</option>
+					<option disabled>warehouse0</option>
 
 					{#each warehouses as warehouse (warehouse.id)}
 						<option value={warehouse.id}>{warehouse.name}</option>
@@ -130,7 +137,7 @@
 					class="textarea validator {errors?.description ? 'valid:border-red-500' : ''}"
 					placeholder="descripcion del producto"
 					required
-					value={formData.description ? String(formData.description) : 'description'}
+					value={formData.description ?? 'description'}
 					aria-invalid={errors?.size ? 'true' : undefined}
 				></textarea>
 				{#if errors?.description}
