@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 
 	import HomeIcon from '$lib/icons/home.icon.svelte';
-	import SearchIcon from '$lib/icons/search.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
 	import AddIcon from '$lib/icons/add.icon.svelte';
 	import QrIcon from '$lib/icons/qr.icon.svelte';

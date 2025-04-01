@@ -21,25 +21,26 @@
 			const qrData: QrData = JSON.parse(readedValue);
 
 			switch (qrData.type) {
-				case 'product':
+				case 'product': {
 					const productResult = await getProduct(supabase, qrData.id);
 
 					if (!productResult.error && productResult.data)
 						await goto(`search/product/${btoa(JSON.stringify(productResult.data))}`);
 
 					break;
+				}
 
-				case 'warehouse':
+				case 'warehouse': {
 					const wareHouseResult = await getWarehouse(supabase, qrData.id);
 					if (!wareHouseResult.error && wareHouseResult.data)
 						await goto(`search/warehouse/${btoa(JSON.stringify(wareHouseResult.data))}`);
 					break;
-
+				}
 				default:
 					alertRef.showAlert('este tipo de item aun no esta contemplado', 'alert-error');
 					return;
 			}
-		} catch (error) {
+		} catch {
 			alertRef.showAlert('Qr invalido', 'alert-error');
 		}
 	};

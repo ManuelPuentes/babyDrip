@@ -4,7 +4,7 @@
 
 	let scanner: Html5Qrcode | null = null;
 	export let isScanning: boolean = true;
-	export let readedValue: any | null = null;
+	export let readedValue: string | null = null;
 
 	const dispatch = createEventDispatcher();
 
@@ -19,12 +19,12 @@
 			readedValue = decodedText;
 			dispatch('qr-detected', { readedValue });
 			stopScanner();
-		} catch (error) {
+		} catch {
 			stopScanner();
 		}
 	};
 
-	const onScanError = async (error: any) => {
+	const onScanError = async () => {
 		if (scanner) {
 			// await scanner.stop();
 		}
@@ -48,7 +48,7 @@
 	});
 </script>
 
-<div class="flex flex-col self-center m-auto gap-4">
+<div class="m-auto flex flex-col gap-4 self-center">
 	<div id="qr-reader" class={$$restProps.class}></div>
 	{#if isScanning}
 		<button onclick={stopScanner} class="btn self-center border border-[#e5e5e5]"> atras</button>

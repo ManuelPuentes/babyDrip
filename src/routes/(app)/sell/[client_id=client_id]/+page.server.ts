@@ -1,65 +1,71 @@
-import { fail } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types";
-import { createSell } from "$lib/api/createSell.api";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "$lib/supabase/supabase";
-import type { Product } from "$lib/interfaces/product.interface";
+import { error, fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = (async ({ url, parent, params }) => { });
+export const load: PageServerLoad = async ({ params, locals: { user, supabase } }) => {
+	const { data: seller } = await supabase
+		.from('user')
+		.select()
+		.eq('email', user?.email ?? '')
+		.single();
+
+	const { data: client } = await supabase
+		.from('client')
+		.select()
+		.eq('id', params.client_id)
+		.single();
+
+	if (!seller) throw error(404, { message: 'seller not found' });
+	if (!client) throw error(404, { message: 'client not found' });
+
+	return { client, seller };
+};
 
 export const actions: Actions = {
+	default: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const data = Object.fromEntries(formData);
+		const errors: Record<string, string> = {};
 
-    default: async ({ request, locals: { supabase, user }, params, }) => {
+		const clientId = String(data.clientId);
+		const sellerId = String(data.sellerId);
+		const total = Number(data.total);
+		const productsId = JSON.parse(String(data.productsId));
 
-        const formData = await request.formData();
-        const data = Object.fromEntries(formData);
-        const errors: any = {};
+		if (total == 0) errors.total = 'total price cant be 0';
+		if (productsId.length == 0) errors.products = 'products cant be 0';
 
-        const products = JSON.parse(String(data.products));
-        const total = Number(data.total);
+		if (Object.keys(errors).length > 0) {
+			return fail(400, { errors });
+		}
 
-        const { data: seller } = await supabase.from('user').select().eq('email', user?.email).single();
-        const { data: client } = await supabase.from('client').select().eq('id', params.client_id).single();
+		const { error } = await supabase
+			.from('sell')
+			.insert({
+				client: clientId,
+				seller: sellerId,
+				total
+			})
+			.select()
+			.single()
+			.then(({ data: sell }) => {
+				return supabase
+					.from('products')
+					.update({
+						sell_id: sell?.id
+					})
+					.in('id', productsId);
+			});
 
-        if (total == 0) errors.total = "total price cant be 0";
-        if (products.length == 0) errors.products = "products cant be 0";
-        if (!client) errors.client = "client not found";
-        if (!seller) errors.seller = "seller not found";
+		if (error) {
+			errors.update = 'error updating products data';
+			// errors.error = error;
+			return fail(400, { errors });
+		}
 
-        if (Object.keys(errors).length > 0) {
-            return fail(400, { errors });
-        };
-
-        const { sell: _newSell } = await createSell(supabase, client.id, seller.id, total);
-
-        if (!_newSell) {
-            errors.sell = "unexpected error creating sell";
-            return fail(400, { errors });
-        }
-
-        const { data: updatedProducts, error: updateErrors } = await updateProducts(supabase, products, _newSell.id);
-
-        if (updateErrors) {
-            errors.update = "error updating products data"
-            return fail(400, { errors });
-        }
-
-        return {
-            success: true,
-            errors: {},
-            message: 'Form submitted successfully!',
-        };
-    }
-
+		return {
+			success: true,
+			errors: {},
+			message: 'Form submitted successfully!'
+		};
+	}
 } satisfies Actions;
-
-
-const updateProducts = async (supabase: SupabaseClient<Database>, products: Array<string>, sellId: string) => {
-
-    const { data, error } = await supabase.from('products').update({
-        sell_id: sellId,
-    })
-        .in('id', products);
-
-    return { data, error };
-}

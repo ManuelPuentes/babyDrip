@@ -14,7 +14,7 @@
 
 	export let data;
 
-	let { supabase } = data;
+	let { supabase, client, seller } = data;
 
 	let qrReader: QrReader;
 	let productsTableRef: HTMLDivElement;
@@ -47,7 +47,6 @@
 	];
 
 	const QrDetectedHandler = async ({ detail: { readedValue } }: CustomEvent) => {
-
 		const qrData: QrData = JSON.parse(readedValue);
 
 		if (qrData.type != 'product') {
@@ -99,7 +98,7 @@
 	};
 	export let form;
 	$: ({ errors, success } = form ?? {
-		errors: {} as any,
+		errors: {} as Record<string, string>,
 		success: false
 	});
 
@@ -120,11 +119,13 @@
 	const handleSubmit = ({ formData }: any) => {
 		creating = true;
 
-		formData.append('total', 100);
-		formData.append('products', JSON.stringify(products.map((p) => p.id)));
+		formData.append('total', total);
+		formData.append('productsId', JSON.stringify(products.map((p) => p.id)));
+		formData.append('clientId', client.id);
+		formData.append('sellerId', seller.id);
 
-		return async ({ update, result }: any) => {
-			let _result = await update();
+		return async ({ update }: any) => {
+			await update();
 			creating = false;
 		};
 	};

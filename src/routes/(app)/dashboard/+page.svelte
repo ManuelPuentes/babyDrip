@@ -50,7 +50,7 @@
 			</thead>
 
 			<tbody>
-				{#each products as product, index}
+				{#each products as product, index (product.id)}
 					<tr onclick={() => {}} class=" cursor-pointer hover:bg-red-300">
 						<td>{index}</td>
 						<td>{product.description}</td>

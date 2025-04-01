@@ -21,6 +21,4 @@
 	></path><path d="M12 3h.01"></path><path d="M12 16v.01"></path><path d="M16 12h1"></path><path
 		d="M21 12v.01"
 	></path><path d="M12 21v-1"></path>
-	
-	</svg
->
+</svg>

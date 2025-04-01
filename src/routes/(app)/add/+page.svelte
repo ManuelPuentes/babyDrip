@@ -14,7 +14,7 @@
 	export let form;
 	$: ({ formData, errors, success } = form ?? {
 		formData: {} as any,
-		errors: {} as any,
+		errors: {} as Record<string, string>,
 		success: false
 	});
 
@@ -34,7 +34,7 @@
 		creating = true;
 
 		return async ({ update }: any) => {
-			let result = await update();
+			await update();
 			creating = false;
 		};
 	};
@@ -116,7 +116,7 @@
 				<select class="select validator" required name="warehouse">
 					<option disabled selected value="warehouse0">warehouse0</option>
 
-					{#each warehouses as warehouse}
+					{#each warehouses as warehouse (warehouse.id)}
 						<option value={warehouse.id}>{warehouse.name}</option>
 					{/each}
 				</select>

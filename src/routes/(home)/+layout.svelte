@@ -1,6 +1,6 @@
 <script>
 	import '../../app.css';
-	import {  invalidate } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	let { data, children } = $props();
@@ -19,7 +19,7 @@
 	});
 
 	async function signInWithGoogle() {
-		const { error, data } = await supabase.auth.signInWithOAuth({
+		await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
 				redirectTo: 'http://localhost:5173/auth/callback',
@@ -41,9 +41,9 @@
 
 		<div class="navbar-end">
 			{#if session}
-				<button onclick={logout} class="btn border-[#e5e5e5] ">Sign Out</button>
+				<button onclick={logout} class="btn border-[#e5e5e5]">Sign Out</button>
 			{:else}
-				<button onclick={signInWithGoogle} class="btn border-[#e5e5e5] ">
+				<button onclick={signInWithGoogle} class="btn border-[#e5e5e5]">
 					<svg
 						aria-label="Google logo"
 						width="16"

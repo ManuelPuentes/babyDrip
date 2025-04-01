@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Client } from '$lib/interfaces/client.interface';
 	import CheckIcon from '$lib/icons/check.icon.svelte';
 	import { enhance } from '$app/forms';
 
@@ -8,13 +7,13 @@
 	export let form;
 	$: ({ formData, errors } = form ?? {
 		formData: {} as any,
-		errors: {} as any
+		errors: {} as Record<string, string>
 	});
 
 	const handleSubmit = () => {
 		creating = true;
 		return async ({ update }: any) => {
-			let result = await update();
+			await update();
 			creating = false;
 		};
 	};
