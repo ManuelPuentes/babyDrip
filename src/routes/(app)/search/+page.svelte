@@ -31,15 +31,12 @@
 		alertRef.showAlert(error, 'alert-error');
 	};
 
-	$:{ if(!isScanning) goto('/dashboard')}
-
 	onMount(() => {
 		qrReader.startScanner();
 
-		return ()=>{
-
-			console.log("unmounted")
-		}
+		return () => {
+			console.log('unmounted');
+		};
 	});
 </script>
 
