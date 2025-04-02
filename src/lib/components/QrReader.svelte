@@ -46,7 +46,12 @@
 	}
 
 	onMount(() => {
-		return () => {};
+		return () => {
+			if(scanner) {
+				scanner.clear()
+				scanner = null;
+			}
+		};
 	});
 </script>
 
