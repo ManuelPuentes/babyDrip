@@ -38,10 +38,10 @@
 
 		<div class="navbar-center hidden lg:flex">
 			<ul class="menu menu-horizontal px-1">
-				<li><a href="/dashboard"><HomeIcon />Home</a></li> 
-				<li><a href="/add"><AddIcon />Add</a></li> 
-				<li><a href="/search"><QrIcon />Search</a></li> 
-				<li><a href="/sell"><CartIcon />Sell</a></li> 
+				<li><a href="/dashboard"><HomeIcon />Home</a></li>
+				<li><a href="/add"><AddIcon />Add</a></li>
+				<li><a href="/search"><QrIcon />Search</a></li>
+				<li><a href="/sell"><CartIcon />Sell</a></li>
 			</ul>
 		</div>
 

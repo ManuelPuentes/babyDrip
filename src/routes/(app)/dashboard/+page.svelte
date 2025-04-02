@@ -34,7 +34,7 @@
 </script>
 
 <div
-	class="over min:w-[90%] mt-10 flex h-[80%] flex-col justify-center gap-4 self-center overflow-hidden rounded-2xl border border-[#e5e5e5] p-2 select-none"
+	class="m-auto flex min-h-[70%] w-[90%] max-w-[700px] flex-col items-center gap-0 rounded-2xl border border-gray-400 p-4 select-none lg:min-h-1/2 lg:w-1/2"
 >
 	<h1 class=" text-center text-2xl font-semibold">Sistema de Inventario</h1>
 
@@ -45,16 +45,18 @@
 					<td>ID</td>
 					<td>Description</td>
 					<td>Size</td>
+					<td class="hidden lg:flex">Cost</td>
 					<td>Price</td>
 				</tr>
 			</thead>
 
 			<tbody>
 				{#each products as product, index (product.id)}
-					<tr onclick={() => {}} class=" cursor-pointer hover:bg-red-300">
+					<tr class="hover:bg-base-300 cursor-pointer">
 						<td>{index}</td>
 						<td>{product.description}</td>
 						<td>{product.size}</td>
+						<td class="hidden lg:flex">{product.cost}</td>
 						<td>{product.sold_price}</td>
 					</tr>
 				{/each}
