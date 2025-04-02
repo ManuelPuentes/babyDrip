@@ -7,7 +7,7 @@
 	class={$$restProps.class}
 	id={$$restProps.id}
 >
-	<rect width="24" height="24" fill="white" />
+	<rect width="24" height="24" fill="none" />
 	<path d="M12 6V18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
 	<path d="M6 12H18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
