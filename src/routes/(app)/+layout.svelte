@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 
 	import HomeIcon from '$lib/icons/home.icon.svelte';
+	import BabyIcon from '$lib/icons/baby.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
 	import AddIcon from '$lib/icons/add.icon.svelte';
 	import QrIcon from '$lib/icons/qr.icon.svelte';
@@ -45,10 +46,10 @@
 	{@render children()}
 
 	<div class="dock shadow-sm md:hidden">
-		<a href="/add"><AddIcon />Add</a>
 		<a href="/dashboard"><HomeIcon />Home</a>
+		<a href="/add"><AddIcon />Add</a>
+		<BabyIcon class="h-12 w-12" />
 		<a href="/search"><QrIcon />Search</a>
-		<!-- <a href="/"><SearchIcon />Search</a> -->
 		<a href="/sell"><CartIcon />Sell</a>
 	</div>
 </div>

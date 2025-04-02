@@ -100,7 +100,7 @@
 			</fieldset>
 
 			<fieldset class="fieldset w-[100%]">
-				<legend class="fieldset-legend">size</legend>
+				<legend class="fieldset-legend">talla</legend>
 
 				<input
 					type="text"

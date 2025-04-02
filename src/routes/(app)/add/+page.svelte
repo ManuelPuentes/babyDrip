@@ -51,15 +51,15 @@
 	<Alert bind:this={alertRef} class="self-start" />
 
 	<div class="flex h-fit flex-col items-center rounded-2xl border p-4">
-		<h1 class="text-2xl font-semibold">Sistema de Facturación</h1>
-
+		<h1 class="text-2xl font-semibold">Agregar Producto</h1>
 		<form
 			action=""
 			method="post"
-			class="m-4 flex w-[300px] flex-col items-center gap-2 whitespace-nowrap"
+			class="m-2 flex w-[300px] flex-col items-center whitespace-nowrap"
 			use:enhance={handleSubmit}
 		>
 			<fieldset class="fieldset flex w-[100%] flex-col gap-0">
+				<legend class="fieldset-legend">costo</legend>
 				<input
 					type="number"
 					name="cost"
@@ -80,6 +80,8 @@
 			</fieldset>
 
 			<fieldset class="fieldset w-[100%]">
+				<legend class="fieldset-legend">precio de venta</legend>
+
 				<input
 					type="number"
 					name="sold_price"
@@ -100,6 +102,7 @@
 			</fieldset>
 
 			<fieldset class="fieldset w-[100%]">
+				<legend class="fieldset-legend">talla</legend>
 				<input
 					type="text"
 					name="size"
@@ -120,9 +123,9 @@
 			</fieldset>
 
 			<fieldset class="fieldset w-[100%]">
-				<select class="select validator" required name="warehouse">
-					<option disabled>warehouse0</option>
+				<legend class="fieldset-legend">almacen</legend>
 
+				<select class="select validator" required name="warehouse">
 					{#each warehouses as warehouse (warehouse.id)}
 						<option value={warehouse.id}>{warehouse.name}</option>
 					{/each}
@@ -132,6 +135,7 @@
 			</fieldset>
 
 			<fieldset class="fieldset w-[100%]">
+				<legend class="fieldset-legend">descripcion del producto</legend>
 				<textarea
 					name="description"
 					class="textarea validator {errors?.description ? 'valid:border-red-500' : ''}"
