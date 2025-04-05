@@ -44,7 +44,7 @@
 			<span class="btn btn-ghost text-xl">babyDrip</span>
 		</div>
 
-		<div class="navbar-center z-10 hidden lg:flex">
+		<div class="navbar-center z-10 hidden md:flex">
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/dashboard"><HomeIcon />Home</a></li>
 				<li>
@@ -74,6 +74,7 @@
 
 	<slot />
 
+	<div class="min-h-[70px] w-screen sm:hidden"></div>
 	<div class="dock shadow-sm md:hidden">
 		<a href="/dashboard"><HomeIcon />Home</a>
 		<a href="/add"><AddIcon />Add</a>

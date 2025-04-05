@@ -44,6 +44,42 @@
 		// 	description: 'dptiondesiptiondescription',
 		// 	size: 'NewBorn ',
 		// 	sold_price: 100
+		// }
+		// {
+		// 	id: 'id4',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id5',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id6',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id7',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id8',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
+		// },
+		// {
+		// 	id: 'id9',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100
 		// },
 	];
 
@@ -127,29 +163,39 @@
 	});
 </script>
 
-<div class=" flex h-screen w-screen flex-col gap-5">
-	<Alert bind:this={alertRef} />
-
-	{#if !isScanning}
-		<div
-			class="mt-10 flex w-[90%] flex-col items-center gap-4 self-center rounded-2xl border border-[#e5e5e5] p-5"
-		>
-			<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
-			<p class="text-xs">Escanee códigos QR para agregar elementos a la factura</p>
+<Alert bind:this={alertRef} />
+<div class={isScanning ? 'flex h-screen' : 'hidden'}>
+	<QrReader
+		bind:this={qrReader}
+		bind:isScanning
+		bind:readedValue
+		on:qr-invalid={qrInvalidHandler}
+		on:qr-detected={qrDetectedHandler}
+		validator={qrvalidator}
+	/>
+</div>
+{#if !isScanning}
+	<div class="flex flex-col items-center select-none lg:m-auto lg:w-1/2">
+		<div class="flex flex-col items-center gap-4 select-none lg:w-4/5">
+			<h1 class="p-3 text-center text-2xl font-semibold">Sistema de Facturación</h1>
+			<p class="w-4/5 text-center text-xs">
+				Escanee códigos QR para agregar elementos a la factura
+			</p>
 
 			<button onclick={qrReader.startScanner} class="btn border border-[#e5e5e5]">
 				<QrIcon />
 				Scanear QR</button
 			>
 		</div>
+		<div class="divider"></div>
 		<div
-			class="flex max-h-[500px] w-[90%] flex-col items-center gap-4 self-center overflow-y-auto rounded-2xl border border-[#e5e5e5] p-5"
+			class="flex flex-col items-center gap-4 select-none lg:w-4/5"
 			bind:this={productsTableRef}
 			id="products-table"
 		>
-			<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
-			<table class=" table-xs table-pin-rows table-pin-cols w-[90%] break-words">
-				<thead class="d border-b">
+			<h1 class="p-3 text-center text-2xl font-semibold">Factura</h1>
+			<table class="table-xs table-pin-rows table-pin-cols w-full break-words">
+				<thead class="border-b border-[#e5e5e5]">
 					<tr>
 						<!-- <th>ID</th> -->
 						<th>Description</th>
@@ -175,7 +221,7 @@
 			</table>
 
 			{#if products.length > 0}
-				<h2 class="self-end">total:{total}</h2>
+				<h2>total:{total}</h2>
 			{:else}
 				<p class="w-[80%] text-center text-xs">
 					No hay elementos. Escanee un código QR para agregar.
@@ -193,14 +239,5 @@
 				{/if}
 			</form>
 		</div>
-	{/if}
-
-	<QrReader
-		bind:this={qrReader}
-		bind:isScanning
-		bind:readedValue
-		on:qr-invalid={qrInvalidHandler}
-		on:qr-detected={qrDetectedHandler}
-		validator={qrvalidator}
-	/>
-</div>
+	</div>
+{/if}

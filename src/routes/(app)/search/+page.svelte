@@ -34,9 +34,7 @@
 	onMount(() => {
 		qrReader.startScanner();
 
-		return () => {
-			console.log('unmounted');
-		};
+		return () => {};
 	});
 </script>
 

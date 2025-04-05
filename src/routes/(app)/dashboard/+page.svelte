@@ -1,18 +1,10 @@
 <script lang="ts">
 	import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api.js';
-	import type { Product } from '$lib/interfaces/product.interface.js';
-	import { onMount } from 'svelte';
 
 	export let data;
-	let {
-		supabase,
-		env: { pageSize }
-	} = data;
+	let { supabase, maxPageNumber, products } = data;
 
 	let pageNumber = 0;
-	let maxPageNumber = 0;
-
-	let products: Array<Product> = [];
 
 	const nextPage = () => {
 		if (pageNumber + 1 < maxPageNumber) pageNumber++;
@@ -23,22 +15,18 @@
 
 	$: fetchProductsData(pageNumber);
 
-	onMount(async () => {
-		const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
-		maxPageNumber = count ? Math.ceil(count / pageSize) : 0;
-	});
-
 	const fetchProductsData = async (pageNumber: number) => {
-		products = await getProductsPaginatedData(pageNumber, supabase);
+		const { products: _products } = await getProductsPaginatedData(pageNumber, supabase);
+		products = _products;
 	};
 </script>
 
 <div
-	class="m-auto flex min-h-[70%] w-[90%] max-w-[700px] flex-col items-center gap-0 rounded-2xl border border-gray-400 p-4 select-none lg:min-h-1/2 lg:w-1/2"
+	class="flex max-w-[700px] flex-col items-center p-4 select-none lg:m-auto lg:min-h-1/2 lg:w-1/2"
 >
 	<h1 class=" text-center text-2xl font-semibold">Sistema de Inventario</h1>
 
-	<div class="min-h-[85%] overflow-hidden">
+	<div>
 		<table class="table-xs table-pin-rows table-pin-cols m-5">
 			<thead class="border-b">
 				<tr>
@@ -53,7 +41,7 @@
 			<tbody>
 				{#each products as product, index (product.id)}
 					<tr class="hover:bg-base-300 cursor-pointer">
-						<td>{index}</td>
+						<td>{index + 1}</td>
 						<td>{product.description}</td>
 						<td>{product.size}</td>
 						<td class="hidden lg:flex">{product.cost}</td>
