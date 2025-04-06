@@ -41,17 +41,22 @@
 	export async function stopScanner() {
 		if (scanner) {
 			await scanner.stop();
+			scanner.clear();
+
+			// dispatch('qr-reader-stop');
 		}
 		isScanning = false;
 	}
 
 	onMount(() => {
 		return () => {
-			// if (scanner) {
-			// 	scanner.stop();
-			// 	scanner.clear();
-			// 	scanner = null;
-			// }
+			try {
+				if (scanner) {
+					scanner.stop();
+					scanner.clear();
+					scanner = null;
+				}
+			} catch {}
 		};
 	});
 </script>

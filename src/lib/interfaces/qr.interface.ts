@@ -3,4 +3,4 @@ export interface QrData extends Record<string, string> {
 	id: string;
 }
 
-export type QrType = 'warehouse' | 'product';
+export type QrType = 'warehouse' | 'products';

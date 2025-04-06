@@ -12,7 +12,7 @@
 
 	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
 		switch (data.type) {
-			case 'product': {
+			case 'products': {
 				await goto(`search/product/${data.id}`);
 				break;
 			}
@@ -33,7 +33,6 @@
 
 	onMount(() => {
 		qrReader.startScanner();
-
 		return () => {};
 	});
 </script>
@@ -44,6 +43,9 @@
 	<QrReader
 		on:qr-invalid={qrInvalidHandler}
 		on:qr-detected={qrDetectedHandler}
+		on:qr-reader-stop={() => {
+			goto('/dashboard');
+		}}
 		bind:this={qrReader}
 		class="w-[300px]"
 		bind:isScanning

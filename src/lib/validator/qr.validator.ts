@@ -9,7 +9,7 @@ const validator = (
 	try {
 		const data: QrData = JSON.parse(input);
 
-		if (data.type != 'product' && data.type != 'warehouse') {
+		if (data.type != 'products' && data.type != 'warehouse') {
 			throw new Error();
 		}
 

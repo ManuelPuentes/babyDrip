@@ -9,6 +9,8 @@
 	import AddIcon from '$lib/icons/add.icon.svelte';
 	import QrIcon from '$lib/icons/qr.icon.svelte';
 	import FileIcon from '$lib/icons/file.icon.svelte';
+	import GraphIcon from '$lib/icons/graph.icon.svelte';
+	import SearchIcon from '$lib/icons/search.icon.svelte';
 
 	export let data;
 
@@ -47,6 +49,8 @@
 		<div class="navbar-center z-10 hidden md:flex">
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/dashboard"><HomeIcon />Home</a></li>
+				<li><a href="/search"><SearchIcon />Search</a></li>
+				<li><a href="/sell"><CartIcon />Sell</a></li>
 				<li>
 					<details bind:open={submenu} class="dropdown">
 						<summary><AddIcon />Add</summary>
@@ -60,8 +64,8 @@
 						</ul>
 					</details>
 				</li>
-				<li><a href="/search"><QrIcon />Search</a></li>
-				<li><a href="/sell"><CartIcon />Sell</a></li>
+				<li><a href="/qr"><QrIcon />Print QR</a></li>
+				<li><a href=""><GraphIcon />Analitycs</a></li>
 			</ul>
 		</div>
 
@@ -76,10 +80,11 @@
 
 	<div class="min-h-[70px] w-screen sm:hidden"></div>
 	<div class="dock shadow-sm md:hidden">
+		<!-- <a href="/add"><AddIcon />Add</a> -->
 		<a href="/dashboard"><HomeIcon />Home</a>
-		<a href="/add"><AddIcon />Add</a>
-		<BabyIcon class="h-12 w-12" />
-		<a href="/search"><QrIcon />Search</a>
+		<a href=""><GraphIcon />Analitycs</a>
+		<!-- <BabyIcon /> -->
+		<a href="/search"><SearchIcon />Search</a>
 		<a href="/sell"><CartIcon />Sell</a>
 	</div>
 </div>
