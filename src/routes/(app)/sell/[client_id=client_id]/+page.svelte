@@ -84,7 +84,7 @@
 	];
 
 	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
-		if (data.type != 'product') {
+		if (data.type != 'products') {
 			alertRef.showAlert('este QR no corresponde a un producto', 'alert-error');
 			return;
 		}
