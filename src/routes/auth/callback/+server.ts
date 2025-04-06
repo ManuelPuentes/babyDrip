@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals }) => {
 	const code = url.searchParams.get('code');
@@ -11,6 +11,8 @@ export const GET = async ({ url, locals }) => {
 	} = await locals.supabase.auth.exchangeCodeForSession(code);
 
 	if (!user || !session) {
+		throw error(400,"exchange for session failed")
+
 		throw redirect(303, '/');
 	}
 
@@ -24,7 +26,8 @@ export const GET = async ({ url, locals }) => {
 
 	if (user_not_found) {
 		await locals.supabase.auth.signOut();
-		throw redirect(303, '/');
+		// throw redirect(303, '/');
+		throw error(400,"el user aqui no se encuentta")
 	}
 
 	throw redirect(303, '/dashboard');
