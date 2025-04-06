@@ -10,7 +10,7 @@ export const load = async () => {};
 export const actions: Actions = {
 	default: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
-		const data = Object.fromEntries(formData);
+		const data = Object.fromEntries(formData) as { name: string; lastname: string; phone: string };
 		const errors: Record<string, string> = {};
 
 		const { name, lastname, phone } = data;

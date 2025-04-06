@@ -4,6 +4,7 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { getWarehouses } from '$lib/api/getWarehouses.api';
 import { productSchema } from '$lib/schemas/productSchema';
 import type { Warehouse } from '$lib/interfaces/warehouse.interface';
+import type { Product } from '$lib/interfaces/product.interface';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	const { data: warehouses } = await getWarehouses(supabase);
@@ -24,7 +25,7 @@ export const actions: Actions = {
 		try {
 			const csvText = await file.text();
 
-			const { data: csvParsedData, errors: parseErrors } = Papa.parse(csvText, {
+			const { data: csvParsedData, errors: parseErrors } = Papa.parse<Partial<Product>>(csvText, {
 				header: true,
 				skipEmptyLines: true,
 				transform: (value, header) => {
@@ -44,7 +45,7 @@ export const actions: Actions = {
 				});
 			}
 
-			const validationResults = csvParsedData.map((row: any, index) => {
+			const validationResults = csvParsedData.map((row: Product, index) => {
 				try {
 					return {
 						row: index + 1,
@@ -74,7 +75,7 @@ export const actions: Actions = {
 				});
 			}
 
-			const validData = validationResults.map((r) => r.data);
+			const validData: any = validationResults.map((r) => r.data);
 
 			const { error } = await supabase.from('products').insert(validData);
 			// .select(); // Returns inserted rows

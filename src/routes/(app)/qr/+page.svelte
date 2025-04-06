@@ -41,8 +41,7 @@
 			// Clean up
 			window.URL.revokeObjectURL(url);
 			document.body.removeChild(a);
-		} catch (err: any) {
-			console.error('Download failed:', err);
+		} catch {
 			alertRef.showAlert('hubo un error al generar el archivo', 'alert-success');
 		} finally {
 			creating = false;

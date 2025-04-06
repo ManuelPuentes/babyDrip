@@ -1,6 +1,6 @@
 import * as QRCode from 'qrcode';
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = async () => {
 	return { qr: await generateQR('EASTER EGG') };
 };
 

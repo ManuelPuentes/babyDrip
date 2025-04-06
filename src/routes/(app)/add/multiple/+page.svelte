@@ -50,7 +50,7 @@
 					{#each error.invalidRows as row (row.row)}
 						<tr class="hover:bg-base-300 cursor-pointer">
 							<th>{row.row}</th>
-							{#each Object.values(row.data) as element}
+							{#each Object.values(row.data) as element (row.row)}
 								<th>{element}</th>
 							{/each}
 						</tr>

@@ -4,6 +4,7 @@
 	import CheckIcon from '$lib/icons/check.icon.svelte';
 	import { enhance } from '$app/forms';
 	import Alert from '$lib/components/Alert.svelte';
+	import type { Product } from '$lib/interfaces/product.interface';
 
 	export let data: PageData;
 
@@ -14,23 +15,23 @@
 
 	export let form;
 	$: ({ formData, errors, success } = form ?? {
-		formData: {} as any,
+		formData: {} as Product,
 		errors: {} as Record<string, string>,
 		success: false
 	});
 
-	// $: {
-	// 	if (success && alertRef) {
-	// 		alertRef.showAlert('producto actualizado de forma exitosa', 'alert-success');
-	// 	}
-	// }
+	$: {
+		if (success && alertRef) {
+			alertRef.showAlert('producto actualizado de forma exitosa', 'alert-success');
+		}
+	}
 
-	// $: {
-	// 	if (errors && alertRef && Object.keys(errors).length) {
-	// 		const error_msg = Object.values(errors).join('\n');
-	// 		alertRef.showAlert(error_msg, 'alert-error');
-	// 	}
-	// }
+	$: {
+		if (errors && alertRef && Object.keys(errors).length) {
+			const error_msg = Object.values(errors).join('\n');
+			alertRef.showAlert(error_msg, 'alert-error');
+		}
+	}
 
 	onMount(() => {});
 

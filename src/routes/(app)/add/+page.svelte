@@ -6,6 +6,7 @@
 	import { getWarehouses } from '$lib/api/getWarehouses.api';
 	import type { Warehouse } from '$lib/interfaces/warehouse.interface';
 	import Alert from '$lib/components/Alert.svelte';
+	import type { Product } from '$lib/interfaces/product.interface';
 
 	export let data: PageData;
 	let alertRef: Alert;
@@ -13,7 +14,7 @@
 
 	export let form;
 	$: ({ formData, errors, success } = form ?? {
-		formData: {} as any,
+		formData: {} as Product,
 		errors: {} as Record<string, string>,
 		success: false
 	});
@@ -91,7 +92,7 @@
 				placeholder="precio de venta"
 				pattern="[0-9]*"
 				min="9"
-				value={formData.soldprice ?? 10}
+				value={formData.sold_price ?? 10}
 				aria-invalid={errors?.sold_price ? 'true' : undefined}
 			/>
 

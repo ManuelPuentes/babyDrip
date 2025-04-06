@@ -50,13 +50,14 @@
 
 	onMount(() => {
 		return () => {
-			try {
-				if (scanner) {
-					scanner.stop();
-					scanner.clear();
-					scanner = null;
-				}
-			} catch {}
+			if (!scanner) return;
+
+			if (scanner.isScanning) {
+				scanner.stop();
+			}
+
+			scanner.clear();
+			scanner = null;
 		};
 	});
 </script>

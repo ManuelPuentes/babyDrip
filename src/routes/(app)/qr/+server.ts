@@ -65,19 +65,19 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 };
 
 async function generateQR(content: string) {
-	try {
-		return await QRCode.toDataURL(content, {
-			width: QR_SIZE * 2,
-			// margin: 10,
-			color: { dark: '#000000', light: '#ffffff' }
-		});
-	} catch (err) {
-		console.error('Error generando QR:', err);
-		return null;
-	}
+	return await QRCode.toDataURL(content, {
+		width: QR_SIZE * 2,
+		// margin: 10,
+		color: { dark: '#000000', light: '#ffffff' }
+	});
 }
 
-const drawPdf = async (data: Array<any>) => {
+const drawPdf = async (
+	data: Array<{
+		id: string;
+		url: string;
+	}>
+) => {
 	const pdfDoc = await PDFDocument.create();
 
 	let page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);

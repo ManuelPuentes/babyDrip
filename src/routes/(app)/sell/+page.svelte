@@ -1,12 +1,13 @@
 <script lang="ts">
 	import CheckIcon from '$lib/icons/check.icon.svelte';
 	import { enhance } from '$app/forms';
+	import type { Client } from '$lib/interfaces/client.interface.js';
 
 	let creating = false;
 
 	export let form;
 	$: ({ formData, errors } = form ?? {
-		formData: {} as any,
+		formData: {} as Client,
 		errors: {} as Record<string, string>
 	});
 
