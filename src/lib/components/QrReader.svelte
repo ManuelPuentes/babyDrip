@@ -62,7 +62,7 @@
 	});
 </script>
 
-<div class="m-auto flex flex-col gap-4 self-center">
+<div class="m-auto flex flex-col gap-4 self-center {isScanning ? 'flex' : 'hidden'}">
 	<div id="qr-reader" class={$$restProps.class}></div>
 	{#if isScanning}
 		<button onclick={stopScanner} class="btn self-center border border-[#e5e5e5]"> atras</button>

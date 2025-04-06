@@ -1,8 +1,9 @@
 <script lang="ts">
-	import QrReader from '$lib/components/QrReader.svelte';
-	import Alert from '$lib/components/Alert.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import Alert from '$lib/components/Alert.svelte';
+	import QrReader from '$lib/components/QrReader.svelte';
+	import ReloadIcon from '$lib/icons/reload.icon.svelte';
 
 	import qrvalidator from '$lib/validator/qr.validator.js';
 
@@ -37,8 +38,14 @@
 	});
 </script>
 
-<div class=" flex h-screen w-screen flex-col gap-5">
+<div class="flex h-screen w-screen flex-col items-center justify-center gap-5">
 	<Alert bind:this={alertRef} />
+
+	<div class=" flex w-40 flex-col gap-4 self-center {isScanning ? 'hidden' : 'flex'}">
+		<button class="btn self-center border border-[#e5e5e5]" onclick={qrReader.startScanner}>
+			<ReloadIcon /></button
+		>
+	</div>
 
 	<QrReader
 		on:qr-invalid={qrInvalidHandler}
@@ -47,7 +54,7 @@
 			goto('/dashboard');
 		}}
 		bind:this={qrReader}
-		class="w-[300px]"
+		class="w-[300px] {isScanning ? 'flex' : 'hidden'}"
 		bind:isScanning
 		validator={qrvalidator}
 	/>

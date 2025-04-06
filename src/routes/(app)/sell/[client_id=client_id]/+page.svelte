@@ -83,6 +83,11 @@
 		// },
 	];
 
+	$: total = products.reduce(
+		(accumulator, currentValue) => accumulator + (currentValue.sold_price ?? 0),
+		0
+	);
+
 	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
 		if (data.type != 'products') {
 			alertRef.showAlert('este QR no corresponde a un producto', 'alert-error');
@@ -109,7 +114,6 @@
 		});
 
 		products = products;
-		total += product.sold_price;
 
 		alertRef.showAlert('element added', 'alert-success');
 	};
