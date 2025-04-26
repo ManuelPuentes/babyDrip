@@ -42,7 +42,7 @@
 <div
 	class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
 >
-	<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
+	<h1 class="p-3 text-2xl font-semibold">Inventario</h1>
 
 	{#if products.length}
 		<table class="table-xs table-pin-rows table-pin-cols table-zebra m-5 w-full">
@@ -59,11 +59,11 @@
 			<tbody>
 				{#each products as product, index}
 					<tr class="cursor-pointer hover:bg-zinc-100">
-						<td class="content-start">{index + 1}</td>
-						<td class="content-start">{product.description}</td>
-						<td class="content-start">{product.size}</td>
-						<td class="content-start">{product.cost}</td>
-						<td class="content-start">{product.sold_price}</td>
+						<td class="content-start text-sm text-gray-500">{index + 1}</td>
+						<td class="content-start text-sm text-gray-500">{product.description}</td>
+						<td class="content-start text-sm text-gray-500">{product.size}</td>
+						<td class="content-start text-sm text-gray-500">{product.cost}</td>
+						<td class="content-start text-sm text-gray-500">{product.sold_price}</td>
 					</tr>
 				{/each}
 			</tbody>
