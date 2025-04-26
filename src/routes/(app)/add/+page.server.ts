@@ -1,3 +1,4 @@
+import type { Product } from '$lib/interfaces/product.interface';
 import { fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
@@ -33,7 +34,7 @@ export const actions: Actions = {
 		return {
 			success: true,
 			message: 'Form submitted successfully!',
-			formData: data
+			formData: {} as Product
 		};
 	}
 } satisfies Actions;

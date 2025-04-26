@@ -28,9 +28,9 @@
 	}
 </script>
 
-{#if error?.invalidRows?.length > 0}
-	<Alert bind:this={alertRef} class="self-start" />
+<Alert bind:this={alertRef} class="top-16" />
 
+{#if error?.invalidRows?.length > 0}
 	<div
 		class="flex max-w-[700px] flex-col items-center p-4 select-none lg:m-auto lg:min-h-1/2 lg:w-1/2"
 	>

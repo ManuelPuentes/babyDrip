@@ -42,7 +42,7 @@
 <div
 	class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
 >
-	<h1 class="text-center text-2xl font-semibold">Sistema de Inventario</h1>
+	<h1 class="p-3 text-2xl font-semibold">Sistema de Facturación</h1>
 
 	{#if products.length}
 		<table class="table-xs table-pin-rows table-pin-cols table-zebra m-5 w-full">

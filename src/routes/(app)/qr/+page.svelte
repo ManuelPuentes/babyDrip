@@ -50,7 +50,7 @@
 	}
 </script>
 
-<Alert bind:this={alertRef} class="self-start" />
+<Alert bind:this={alertRef} class="self-start top-16" />
 
 <div class="m-auto flex h-screen flex-col items-center">
 	<img src={data.qr} alt="exmaple qr fun hidden message" class="w-[200px]" />
