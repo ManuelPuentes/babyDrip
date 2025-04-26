@@ -179,27 +179,21 @@
 	/>
 </div>
 {#if !isScanning}
-	<div class="flex flex-col items-center select-none lg:m-auto lg:w-1/2">
-		<div class="flex flex-col items-center gap-4 select-none lg:w-4/5">
-			<h1 class="p-3 text-center text-2xl font-semibold">Sistema de Facturación</h1>
-			<p class="w-4/5 text-center text-xs">
-				Escanee códigos QR para agregar elementos a la factura
-			</p>
-
-			<button onclick={qrReader.startScanner} class="btn border border-[#e5e5e5]">
-				<QrIcon />
-				Scanear QR</button
-			>
-		</div>
-		<div class="divider"></div>
+	<div
+		class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
+	>
 		<div
-			class="flex flex-col items-center gap-4 select-none lg:w-4/5"
+			class="flex w-full flex-col items-center gap-4 p-4 select-none"
 			bind:this={productsTableRef}
 			id="products-table"
 		>
-			<h1 class="p-3 text-center text-2xl font-semibold">Factura</h1>
+			<h1 class="text-center text-2xl font-semibold">Factura</h1>
+			<span class="w-5/6 text-center text-sm text-gray-500"
+				>Escanee códigos QR para agregar elementos a la factura</span
+			>
+
 			<table class="table-xs table-pin-rows table-pin-cols w-full break-words">
-				<thead class="border-b border-[#e5e5e5]">
+				<thead>
 					<tr>
 						<!-- <th>ID</th> -->
 						<th>Description</th>
@@ -227,21 +221,26 @@
 			{#if products.length > 0}
 				<h2>total:{total}</h2>
 			{:else}
-				<p class="w-[80%] text-center text-xs">
-					No hay elementos. Escanee un código QR para agregar.
-				</p>
+				<span class="w-5/6 bg-zinc-100 text-center text-sm text-gray-500 p-4">No hay elementos.</span>
 			{/if}
 
-			<form action="" method="post" use:enhance={handleSubmit}>
-				{#if creating}
-					<span class="loading loading-ring loading-xl"></span>
-				{:else}
-					<button class="btn border border-[#e5e5e5]" type="submit">
-						<CartIcon />
-						Comprar
-					</button>
-				{/if}
-			</form>
+			<div class="flex w-full justify-around">
+				<button onclick={qrReader.startScanner} class="btn">
+					<QrIcon />
+					Scanear QR</button
+				>
+
+				<form action="" method="post" use:enhance={handleSubmit}>
+					{#if creating}
+						<span class="loading loading-ring loading-xl"></span>
+					{:else}
+						<button class="btn" type="submit">
+							<CartIcon />
+							Comprar
+						</button>
+					{/if}
+				</form>
+			</div>
 		</div>
 	</div>
 {/if}
