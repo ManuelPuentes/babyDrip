@@ -26,7 +26,7 @@ export const actions: Actions = {
 				})
 				.throwOnError();
 		} catch {
-			errors.description = 'hubo un error al momento de procesar la compra';
+			errors.description = 'hubo un error al momento de procesar el registro del producto';
 			return fail(400, { formData: data, errors });
 		}
 

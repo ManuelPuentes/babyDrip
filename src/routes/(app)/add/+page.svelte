@@ -147,7 +147,7 @@
 				aria-invalid={errors?.size ? 'true' : undefined}
 			></textarea>
 			{#if errors?.description}
-				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.description}</p>
+				<p class=" overflow-hidden text-wrap text-ellipsis text-red-500">{errors.description}</p>
 			{:else}
 				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
 			{/if}

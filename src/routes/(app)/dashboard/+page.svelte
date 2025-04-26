@@ -40,13 +40,13 @@
 </script>
 
 <div
-	class="m-auto flex max-w-[700px] flex-col items-center overflow-y-scroll p-4 select-none md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
+	class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
 >
-	<h1 class=" text-center text-2xl font-semibold">Sistema de Inventario</h1>
+	<h1 class="text-center text-2xl font-semibold">Sistema de Inventario</h1>
 
-	<div>
-		<table class="table-xs table-pin-rows table-pin-cols table-zebra m-5">
-			<thead class="border-b">
+	{#if products.length}
+		<table class="table-xs table-pin-rows table-pin-cols table-zebra m-5 w-full">
+			<thead class="">
 				<tr>
 					<td>ID</td>
 					<td>Description</td>
@@ -59,19 +59,30 @@
 			<tbody>
 				{#each products as product, index}
 					<tr class="cursor-pointer hover:bg-zinc-100">
-						<td>{index + 1}</td>
-						<td>{product.description}</td>
-						<td>{product.size}</td>
-						<td class="hidden lg:flex">{product.cost}</td>
-						<td>{product.sold_price}</td>
+						<td class="content-start">{index + 1}</td>
+						<td class="content-start">{product.description}</td>
+						<td class="content-start">{product.size}</td>
+						<td class="content-start">{product.cost}</td>
+						<td class="content-start">{product.sold_price}</td>
 					</tr>
 				{/each}
 			</tbody>
+
+			<tfoot>
+				<tr>
+					<td>ID</td>
+					<td>Description</td>
+					<td>Size</td>
+					<td class="hidden lg:flex">Cost</td>
+					<td>Price</td>
+				</tr>
+			</tfoot>
 		</table>
-	</div>
+	{:else}
+		<span class="text-sm text-gray-500">no hay productos en inventario</span>
+	{/if}
 
 	<div id="load-more-trigger" style="height: 20px;" bind:this={load_trigger}></div>
-
 	{#if loading}
 		<span class="loading loading-spinner loading-xs">aaa</span>
 	{/if}
