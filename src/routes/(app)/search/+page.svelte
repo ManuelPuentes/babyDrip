@@ -39,7 +39,7 @@
 </script>
 
 <div class="flex h-screen w-screen flex-col items-center justify-center gap-5">
-	<Alert bind:this={alertRef} />
+	<Alert bind:this={alertRef} class="top-16 self-start" />
 
 	<div class=" flex w-40 flex-col gap-4 self-center {isScanning ? 'hidden' : 'flex'}">
 		<button class="btn self-center border border-[#e5e5e5]" onclick={qrReader.startScanner}>

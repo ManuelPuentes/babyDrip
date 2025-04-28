@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Html5Qrcode } from 'html5-qrcode';
+	import { Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	let scanner: Html5Qrcode | null = null;
@@ -7,10 +7,17 @@
 
 	const dispatch = createEventDispatcher();
 
+	const formatsToSupport = [
+		Html5QrcodeSupportedFormats.QR_CODE,
+	];
 	const scannerConfig = {
-		fps: 1,
+		fps: 5,
 		rememberLastUsedCamera: true,
-		supportedScanTypes: [0]
+		aspectRatio: 1,
+		showTorchButtonIfSupported: true,
+		supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+		qrbox: { width: 250, height: 250 },
+		formatsToSupport: formatsToSupport
 	};
 
 	export let validator: (decodedText: string) => {

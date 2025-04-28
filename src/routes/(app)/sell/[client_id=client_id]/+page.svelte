@@ -167,7 +167,7 @@
 	});
 </script>
 
-<Alert bind:this={alertRef} />
+<Alert bind:this={alertRef} class="top-16 self-start" />
 <div class={isScanning ? 'flex h-screen' : 'hidden'}>
 	<QrReader
 		bind:this={qrReader}

@@ -81,9 +81,9 @@
 	<div class="dock shadow-sm md:hidden">
 		<!-- <a href="/add"><AddIcon />Add</a> -->
 		<a href="/dashboard"><HomeIcon />Home</a>
-		<a href=""><GraphIcon />Analitycs</a>
 		<!-- <BabyIcon /> -->
 		<a href="/search"><SearchIcon />Search</a>
 		<a href="/sell"><CartIcon />Sell</a>
+		<a href=""><GraphIcon />Analitycs</a>
 	</div>
 </div>
