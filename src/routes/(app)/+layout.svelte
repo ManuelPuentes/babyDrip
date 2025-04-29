@@ -64,7 +64,7 @@
 					</details>
 				</li>
 				<li><a href="/qr"><QrIcon />Print QR</a></li>
-				<li><a href=""><GraphIcon />Analitycs</a></li>
+				<li><a href="/analytics"><GraphIcon />Analytics</a></li>
 			</ul>
 		</div>
 
@@ -84,6 +84,6 @@
 		<!-- <BabyIcon /> -->
 		<a href="/search"><SearchIcon />Search</a>
 		<a href="/sell"><CartIcon />Sell</a>
-		<a href=""><GraphIcon />Analitycs</a>
+		<a href="/analytics"><GraphIcon />Analytics</a>
 	</div>
 </div>
