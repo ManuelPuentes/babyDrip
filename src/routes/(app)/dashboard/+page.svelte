@@ -59,27 +59,21 @@
 			<tbody>
 				{#each products as product, index}
 					<tr class="cursor-pointer hover:bg-zinc-100">
-						<td class="content-start text-sm text-gray-500">{index + 1}</td>
-						<td class="content-start text-sm text-gray-500">{product.description}</td>
-						<td class="content-start text-sm text-gray-500">{product.size}</td>
-						<td class="content-start text-sm text-gray-500">{product.cost}</td>
-						<td class="content-start text-sm text-gray-500">{product.sold_price}</td>
+						<td class="content-start text-sm">{index + 1}</td>
+						<td class="content-start text-sm">{product.description}</td>
+						<td class="content-start text-sm">{product.size}</td>
+						<td class="hidden content-start text-sm lg:flex"
+							>{parseFloat(String(product.cost / 100)).toFixed(2)}</td
+						>
+						<td class="content-start text-sm"
+							>{parseFloat(String(product.sold_price / 100)).toFixed(2)}</td
+						>
 					</tr>
 				{/each}
 			</tbody>
-
-			<tfoot>
-				<tr>
-					<td>ID</td>
-					<td>Description</td>
-					<td>Size</td>
-					<td class="hidden lg:flex">Cost</td>
-					<td>Price</td>
-				</tr>
-			</tfoot>
 		</table>
 	{:else}
-		<span class="text-sm text-gray-500">no hay productos en inventario</span>
+		<span class="text-sm">no hay productos en inventario</span>
 	{/if}
 
 	<div id="load-more-trigger" style="height: 20px;" bind:this={load_trigger}></div>

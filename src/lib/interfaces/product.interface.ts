@@ -5,9 +5,9 @@ export interface Product {
 	sell_id?: string | null;
 	printed?: boolean;
 
-	cost?: number;
-	sold_price?: number;
-	size?: string;
-	description?: string;
-	stored_at?: string;
+	cost: number;
+	sold_price: number;
+	size: string;
+	description: string;
+	stored_at: string;
 }
