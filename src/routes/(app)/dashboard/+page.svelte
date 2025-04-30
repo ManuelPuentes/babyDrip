@@ -19,7 +19,7 @@
 
 	onMount(async (): Promise<any> => {
 		const observer = new IntersectionObserver(
-			async (entries) => {
+			async () => {
 				if (loading || pageNumber >= maxPageNumber) return;
 				loading = true;
 				const { products: _products } = await getProductsPaginatedData(pageNumber, supabase);

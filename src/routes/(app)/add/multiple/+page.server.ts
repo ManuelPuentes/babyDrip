@@ -17,9 +17,7 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 };
 
 export const actions: Actions = {
-
 	process_csv_file: async ({ request, locals: { supabase } }) => {
-
 		const formData = await request.formData();
 		const file = formData.get('csv') as File;
 		const taxes = Number(formData.get('taxes')) as number;
@@ -27,7 +25,6 @@ export const actions: Actions = {
 		const warehouseId = formData.get('warehouse') as string;
 
 		const logisticsTotal = (taxes + logistics) * 100;
-
 
 		const warehouse = await getWarehouse(supabase, warehouseId);
 
@@ -58,7 +55,7 @@ export const actions: Actions = {
 
 		let batchValue: number = 0;
 		const validRows: Array<Product> = [];
-		const invalidRows: Array<Product & { errors: Record<string, string>, row: number }> = [];
+		const invalidRows: Array<Product & { errors: Record<string, string>; row: number }> = [];
 
 		try {
 			const csvText = await file.text();
@@ -72,7 +69,7 @@ export const actions: Actions = {
 					}
 
 					return value;
-				},
+				}
 			});
 
 			if (parseErrors.length) {
@@ -86,7 +83,6 @@ export const actions: Actions = {
 			}
 
 			csvParsedData.map((row: Product, index) => {
-
 				let { cost, description, size } = row;
 				cost = (cost ?? 0) * 100;
 
@@ -96,10 +92,14 @@ export const actions: Actions = {
 					cost
 				);
 
-				const product_cost = Math.ceil((cost + logistics_expenses));
+				const product_cost = Math.ceil(cost + logistics_expenses);
 				const suggested_sold_price = Math.ceil(product_cost * 1.3);
 
-				const { success, data, error: _parseErrors } = productSchema.safeParse({
+				const {
+					success,
+					data,
+					error: _parseErrors
+				} = productSchema.safeParse({
 					cost: product_cost,
 					sold_price: suggested_sold_price,
 					description,
@@ -108,14 +108,13 @@ export const actions: Actions = {
 				});
 
 				if (success) {
-					validRows.push(data)
+					validRows.push(data);
 				} else {
-
-					let row_errors: Record<string, string> = {}
+					let row_errors: Record<string, string> = {};
 
 					_parseErrors.errors.map((e: ZodIssue) => {
 						row_errors[String(e.path[0])] = String(e.message);
-					})
+					});
 
 					invalidRows.push({
 						row: index + 1,
@@ -124,8 +123,8 @@ export const actions: Actions = {
 						description,
 						stored_at: warehouseId,
 						size,
-						errors: row_errors,
-					})
+						errors: row_errors
+					});
 				}
 			});
 
@@ -139,12 +138,10 @@ export const actions: Actions = {
 				});
 			}
 
-
 			return {
 				success: true,
 				result: validRows
 			};
-
 		} catch {
 			return fail(500, {
 				error: {
@@ -152,27 +149,28 @@ export const actions: Actions = {
 				} as AddProductError
 			});
 		}
-
 	},
 
 	save_data: async ({ request, locals: { supabase } }) => {
-
 		const formData = await request.formData();
 		const json = formData.get('products') as string;
 
 		if (!json) {
-			return { error: "No JSON payload provided" };
+			return { error: 'No JSON payload provided' };
 		}
 
 		const products: Array<Product> = JSON.parse(json);
 		const validRows: Array<Product> = [];
-		const invalidRows: Map<number, Product & { errors: Record<string, string> }> = new Map()
+		const invalidRows: Map<number, Product & { errors: Record<string, string> }> = new Map();
 
 		products.map((row: Product, index) => {
-
 			const { cost, description, size, sold_price, stored_at } = row;
-			
-			const { success, data, error: _parseErrors } = productSchema.safeParse({
+
+			const {
+				success,
+				data,
+				error: _parseErrors
+			} = productSchema.safeParse({
 				cost: Math.ceil(cost),
 				sold_price: Math.ceil(sold_price),
 				description,
@@ -181,14 +179,13 @@ export const actions: Actions = {
 			});
 
 			if (success) {
-				validRows.push(data)
+				validRows.push(data);
 			} else {
-
-				let row_errors: Record<string, string> = {}
+				let row_errors: Record<string, string> = {};
 
 				_parseErrors.errors.map((e: ZodIssue) => {
 					row_errors[String(e.path[0])] = String(e.message);
-				})
+				});
 
 				invalidRows.set(index, {
 					cost,
@@ -196,8 +193,8 @@ export const actions: Actions = {
 					description,
 					size,
 					stored_at,
-					errors: row_errors,
-				})
+					errors: row_errors
+				});
 			}
 		});
 
@@ -210,21 +207,14 @@ export const actions: Actions = {
 			});
 		}
 
-		const { error } = await supabase
-			.from('products')
-			.insert(validRows); // No .select()
+		const { error } = await supabase.from('products').insert(validRows); // No .select()
 
 		if (error) throw error;
-
-
-
-
 
 		return {
 			success: {
 				message: `${validRows.length} products inserted.`
 			}
-
 		};
 	}
 } satisfies Actions;
@@ -235,6 +225,4 @@ const calculateLogisticsExpensesPerProduct = (
 	product_cost: number
 ) => {
 	return parseFloat((logisticsTotal * ((product_cost * 1) / batchValue)).toFixed(2));
-}
-
-
+};

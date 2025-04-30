@@ -16,7 +16,6 @@
 
 		return () => subscription.unsubscribe();
 	});
-
 </script>
 
 {@render children()}
