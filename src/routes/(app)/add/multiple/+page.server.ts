@@ -5,6 +5,10 @@ import { getWarehouses } from '$lib/api/getWarehouses.api';
 import { productSchema } from '$lib/schemas/productSchema';
 import type { Warehouse } from '$lib/interfaces/warehouse.interface';
 import type { Product } from '$lib/interfaces/product.interface';
+import { getWarehouse } from '$lib/api/getWarehouse.api';
+import { map, type ZodIssue } from 'zod';
+import InvalidRows from './components/InvalidRows.svelte';
+import { AddProductsErrorTypesEnum, type AddProductError } from './interfaces/interfaces';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 	const { data: warehouses } = await getWarehouses(supabase);
@@ -13,85 +17,224 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals: { supabase } }) => {
+
+	process_csv_file: async ({ request, locals: { supabase } }) => {
+
 		const formData = await request.formData();
 		const file = formData.get('csv') as File;
+		const taxes = Number(formData.get('taxes')) as number;
+		const logistics = Number(formData.get('logistics')) as number;
 		const warehouseId = formData.get('warehouse') as string;
 
+		const logisticsTotal = (taxes + logistics) * 100;
+
+
+		const warehouse = await getWarehouse(supabase, warehouseId);
+
 		if (!file || file.size === 0) {
-			return fail(400, { error: { message: 'No file uploaded' } });
+			return fail(400, {
+				error: {
+					type: AddProductsErrorTypesEnum.INVALID_REQUIRED_FIELD,
+					message: 'No file uploaded'
+				} as AddProductError
+			});
 		}
+		if (logisticsTotal < 0) {
+			return fail(400, {
+				error: {
+					type: AddProductsErrorTypesEnum.INVALID_REQUIRED_FIELD,
+					message: 'Invalid logistics values'
+				} as AddProductError
+			});
+		}
+		if (warehouse.error) {
+			return fail(400, {
+				error: {
+					type: AddProductsErrorTypesEnum.INVALID_REQUIRED_FIELD,
+					message: warehouse.error.message
+				} as AddProductError
+			});
+		}
+
+		let batchValue: number = 0;
+		const validRows: Array<Product> = [];
+		const invalidRows: Array<Product & { errors: Record<string, string>, row: number }> = [];
 
 		try {
 			const csvText = await file.text();
-
-			const { data: csvParsedData, errors: parseErrors } = Papa.parse<Partial<Product>>(csvText, {
+			const { data: csvParsedData, errors: parseErrors } = Papa.parse<Product>(csvText, {
 				header: true,
 				skipEmptyLines: true,
 				transform: (value, header) => {
-					if (header === 'cost' || header === 'sold_price') {
+					if (header === 'cost') {
+						batchValue += Number(value) * 100;
 						return Number(value);
 					}
+
 					return value;
-				}
+				},
 			});
 
-			if (parseErrors?.length) {
+			if (parseErrors.length) {
 				return fail(400, {
 					error: {
+						type: AddProductsErrorTypesEnum.CSV_PARSE_ERROR,
 						message: 'CSV parse errors',
-						parseErrors
-					}
+						data: parseErrors
+					} as AddProductError
 				});
 			}
 
-			const validationResults = csvParsedData.map((row: Product, index) => {
-				try {
-					return {
+			csvParsedData.map((row: Product, index) => {
+
+				let { cost, description, size } = row;
+				cost = (cost ?? 0) * 100;
+
+				const logistics_expenses = calculateLogisticsExpensesPerProduct(
+					logisticsTotal,
+					batchValue,
+					cost
+				);
+
+				const product_cost = Math.ceil((cost + logistics_expenses));
+				const suggested_sold_price = Math.ceil(product_cost * 1.3);
+
+				const { success, data, error: _parseErrors } = productSchema.safeParse({
+					cost: product_cost,
+					sold_price: suggested_sold_price,
+					description,
+					size,
+					stored_at: warehouseId
+				});
+
+				if (success) {
+					validRows.push(data)
+				} else {
+
+					let row_errors: Record<string, string> = {}
+
+					_parseErrors.errors.map((e: ZodIssue) => {
+						row_errors[String(e.path[0])] = String(e.message);
+					})
+
+					invalidRows.push({
 						row: index + 1,
-						data: productSchema.parse({ ...row, stored_at: warehouseId }),
-						valid: true
-					};
-				} catch (validationError: any) {
-					return {
-						row: index + 1,
-						data: row,
-						valid: false,
-						errors: validationError.errors
-					};
+						cost: product_cost,
+						sold_price: suggested_sold_price,
+						description,
+						stored_at: warehouseId,
+						size,
+						errors: row_errors,
+					})
 				}
 			});
 
-			const invalidRows = validationResults.filter((r) => !r.valid);
-
-			if (invalidRows.length > 0) {
+			if (invalidRows.length) {
 				return fail(400, {
 					error: {
-						message: `${invalidRows.length} invalid rows found`,
-						invalidRows,
-						validRows: csvParsedData.length - invalidRows.length,
-						totalRows: csvParsedData.length
-					}
+						type: AddProductsErrorTypesEnum.CSV_INVALID_ROWS,
+						message: 'Validation errors in CSV data',
+						data: invalidRows
+					} as AddProductError
 				});
 			}
 
-			const validData: any = validationResults.map((r) => r.data);
-
-			const { error } = await supabase.from('products').insert(validData);
-			// .select(); // Returns inserted rows
-
-			if (error) throw error;
 
 			return {
 				success: true,
-				count: validData.length
+				result: validRows
 			};
+
 		} catch {
 			return fail(500, {
 				error: {
 					message: 'Server error during processing'
-				}
+				} as AddProductError
 			});
 		}
+
+	},
+
+	save_data: async ({ request, locals: { supabase } }) => {
+
+		const formData = await request.formData();
+		const json = formData.get('products') as string;
+
+		if (!json) {
+			return { error: "No JSON payload provided" };
+		}
+
+		const products: Array<Product> = JSON.parse(json);
+		const validRows: Array<Product> = [];
+		const invalidRows: Map<number, Product & { errors: Record<string, string> }> = new Map()
+
+		products.map((row: Product, index) => {
+
+			const { cost, description, size, sold_price, stored_at } = row;
+			
+			const { success, data, error: _parseErrors } = productSchema.safeParse({
+				cost: Math.ceil(cost),
+				sold_price: Math.ceil(sold_price),
+				description,
+				size,
+				stored_at
+			});
+
+			if (success) {
+				validRows.push(data)
+			} else {
+
+				let row_errors: Record<string, string> = {}
+
+				_parseErrors.errors.map((e: ZodIssue) => {
+					row_errors[String(e.path[0])] = String(e.message);
+				})
+
+				invalidRows.set(index, {
+					cost,
+					sold_price,
+					description,
+					size,
+					stored_at,
+					errors: row_errors,
+				})
+			}
+		});
+
+		if (invalidRows.size) {
+			return fail(400, {
+				error: {
+					message: 'Invalid Rows detected',
+					data: invalidRows
+				} as AddProductError
+			});
+		}
+
+		const { error } = await supabase
+			.from('products')
+			.insert(validRows); // No .select()
+
+		if (error) throw error;
+
+
+
+
+
+		return {
+			success: {
+				message: `${validRows.length} products inserted.`
+			}
+
+		};
 	}
 } satisfies Actions;
+
+const calculateLogisticsExpensesPerProduct = (
+	logisticsTotal: number,
+	batchValue: number,
+	product_cost: number
+) => {
+	return parseFloat((logisticsTotal * ((product_cost * 1) / batchValue)).toFixed(2));
+}
+
+

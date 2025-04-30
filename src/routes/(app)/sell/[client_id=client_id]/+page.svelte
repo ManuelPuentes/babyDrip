@@ -188,7 +188,7 @@
 			id="products-table"
 		>
 			<h1 class="text-center text-2xl font-semibold">Factura</h1>
-			<span class="w-5/6 text-center text-sm text-gray-500"
+			<span class="w-5/6 text-center text-sm"
 				>Escanee códigos QR para agregar elementos a la factura</span
 			>
 
@@ -221,7 +221,7 @@
 			{#if products.length > 0}
 				<h2>total:{total}</h2>
 			{:else}
-				<span class="w-5/6 bg-zinc-100 text-center text-sm text-gray-500 p-4">No hay elementos.</span>
+				<span class="w-5/6 bg-zinc-100 p-4 text-center text-sm">No hay elementos.</span>
 			{/if}
 
 			<div class="flex w-full justify-around">
