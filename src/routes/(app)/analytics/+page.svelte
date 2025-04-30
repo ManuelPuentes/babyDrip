@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck
 
-	import { Chart, Card, A, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
+	import { Chart } from 'flowbite-svelte';
 
 	const options = {
 		colors: ['#1A56DB', '#FDBA8C'],

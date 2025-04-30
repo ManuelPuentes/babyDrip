@@ -7,9 +7,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	const formatsToSupport = [
-		Html5QrcodeSupportedFormats.QR_CODE,
-	];
+	const formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
 	const scannerConfig = {
 		fps: 5,
 		rememberLastUsedCamera: true,

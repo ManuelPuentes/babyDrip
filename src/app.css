@@ -2,7 +2,9 @@
 
 @plugin "daisyui" {
 	/* themes: light --default, dark; */
-    /* themes: light --default, dark --prefersdark, retro, cyberpunk, nord, valentine, aqua; */
+	/* themes: light --default, dark --prefersdark, retro, cyberpunk, nord, valentine, aqua; */
 
-	themes:  nord --default , dark;
+	themes:
+		nord --default,
+		dark;
 }

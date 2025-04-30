@@ -9,7 +9,7 @@
 </script>
 
 <section class="flex flex-col items-center">
-	<h1 class="w-fit text-2xl font-semibold ">Agregar Productos</h1>
+	<h1 class="w-fit text-2xl font-semibold">Agregar Productos</h1>
 	<form
 		action="?/process_csv_file"
 		enctype="multipart/form-data"

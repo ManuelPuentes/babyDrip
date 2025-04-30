@@ -51,10 +51,12 @@
 				<li><a href="/search"><SearchIcon />Search</a></li>
 				<li><a href="/sell"><CartIcon />Sell</a></li>
 				<li>
+					<a href="/add/multiple"><AddIcon class="w-5" /> Add Products</a>
+				</li>
+				<!-- <li>
 					<details bind:open={submenu} class="dropdown">
 						<summary><AddIcon />Add</summary>
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+
 						<ul class="p-2">
 							<li on:click|stopPropagation><a href="/add"><AddIcon />Add single</a></li>
 							<li on:click|stopPropagation={toggleSubmenu}>
@@ -62,7 +64,7 @@
 							</li>
 						</ul>
 					</details>
-				</li>
+				</li> -->
 				<li><a href="/qr"><QrIcon />Print QR</a></li>
 				<li><a href="/analytics"><GraphIcon />Analytics</a></li>
 			</ul>
