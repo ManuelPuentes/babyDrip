@@ -18,7 +18,7 @@
 	<div class="modal-box flex w-fit flex-col items-center">
 		<h3 class="text-2xl font-semibold">{header}</h3>
 
-		<p class="text-md !font-light">{content}</p>
+		<pre class="text-md !font-light">{content}</pre>
 		<div class="modal-action">
 			<form method="dialog">
 				<button class="btn">{button_text}</button>

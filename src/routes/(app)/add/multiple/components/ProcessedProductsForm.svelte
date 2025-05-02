@@ -4,6 +4,7 @@
 	import type { Product } from '$lib/interfaces/product.interface';
 	import Alert from '$lib/components/Alert.svelte';
 	import { goto } from '$app/navigation';
+	import Modal from '$lib/components/Modal.svelte';
 
 	const { data } = $props();
 
@@ -55,7 +56,7 @@
 			if (type === 'success') {
 				const { success } = data as { success: { message: string; data: any } };
 				successMessage = success.message;
-				modalRef.showModal();
+				modalRef.openModal();
 			}
 		};
 	}
@@ -63,28 +64,15 @@
 
 <Alert bind:this={alertRef} class="top-16" />
 
-<dialog
-	class="modal"
+<Modal
 	bind:this={modalRef}
-	onclose={() => {
+	header="Success!"
+	content={`Productos agregados correctamente!\n${successMessage}`}
+	button_text="Finalizar"
+	on_close={() => {
 		goto('/dashboard');
 	}}
->
-	<div class="modal-box flex w-fit flex-col items-center">
-		<h3 class="text-2xl font-semibold">Success!</h3>
-
-		<div class="flex aspect-square w-10 items-center justify-center rounded-full">
-			<CheckIcon class="h-10 w-10" />
-		</div>
-		<p class="text-md !font-light">Productos agregados correctamente!</p>
-		<p class="text-md !font-light">{successMessage}</p>
-		<div class="modal-action">
-			<form method="dialog">
-				<button class="btn">Finalizar</button>
-			</form>
-		</div>
-	</div>
-</dialog>
+/>
 
 <h1 class="w-fit text-2xl font-semibold">Processed products</h1>
 
