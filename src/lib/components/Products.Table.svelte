@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Product } from '$lib/interfaces/product.interface';
-	import { onMount } from 'svelte';
 
 	interface Props {
 		data: Array<Product>;
@@ -8,15 +7,11 @@
 	const { data }: Props = $props();
 
 	let products = $state<Array<Product>>(data);
-
-	onMount(() => {
-		console.log(data);
-	});
 </script>
 
 {#if products.length}
 	<table class="table-xs table-pin-rows table-pin-cols table-zebra m-5 w-full">
-		<thead class="">
+		<thead>
 			<tr>
 				<td>ID</td>
 				<td>Description</td>

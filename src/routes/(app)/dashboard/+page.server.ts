@@ -11,7 +11,7 @@ export const load = async ({ locals: { supabase } }) => {
 		maxPageNumber,
 		pageSize: Number(PUBLIC_PAGE_SIZE)
 	} as {
-		products: Array<Product>,
+		products: Array<Product>;
 		maxPageNumber: number;
 		pageSize: number;
 	};

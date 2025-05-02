@@ -1,92 +1,128 @@
 <script lang="ts">
-	import { afterUpdate } from 'svelte';
+	import { enhance } from '$app/forms';
+	import type { PageData } from './$types';
+
+	//components
 	import Alert from '$lib/components/Alert.svelte';
 	import QrReader from '$lib/components/QrReader.svelte';
+	import SellTicket from './components/SellTicket.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+
 	//icons
 	import QrIcon from '$lib/icons/qr.icon.svelte';
 	import CartIcon from '$lib/icons/cart.icon.svelte';
-	import TimesIcon from '$lib/icons/times.icon.svelte';
 	//interfaces
 	import type { Product } from '$lib/interfaces/product.interface.js';
+	//api
 	import { getProduct } from '$lib/api/getProduct.api.js';
-	import { enhance } from '$app/forms';
-
+	//utils
 	import qrvalidator from '$lib/validator/qr.validator.js';
 
-	export let data;
+	interface FormState {
+		errors?: any;
+		success?: boolean;
+		result?: unknown;
+	}
 
-	let { supabase, client, seller } = data;
+	interface Props {
+		data: PageData;
+		form: FormState;
+	}
 
-	let qrReader: QrReader;
-	let productsTableRef: HTMLDivElement;
+	const { data, form }: Props = $props();
+
+	let { tasaBCV, client, seller, supabase } = $state<PageData>(data);
+
+	const { errors, success } = $derived(form ?? {});
+
 	let alertRef: Alert;
+	let qrReader: QrReader;
+	let modalRef: Modal;
+	let productsTableRef: HTMLDivElement | undefined = $state();
+	let acceptBs = $state(false);
+	let partialOnInvoice = $state(0);
 
-	let readedValue = '';
-	let isScanning = false;
-	let total = 0;
-	let creating = false;
+	let isScanning = $state(false);
+	let total = $state(0);
+	let creating = $state(false);
 
-	let products: Array<Product> = [
-		// {
-		// 	id: 'id',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
+	let products: Array<Product> = $state([
+		{
+			id: 'id',
+			description: 'dptiondesiptiondescription',
+			size: 'NewBorn ',
+			sold_price: 100,
+			cost: 0,
+			stored_at: ''
+		}
 		// {
 		// 	id: 'id2',
-		// 	description: 'dptiondesiptiondescription',
+		// 	description:
+		// 		'dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription ',
 		// 	size: 'NewBorn ',
-		// 	sold_price: 100
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
 		// },
 		// {
 		// 	id: 'id3',
 		// 	description: 'dptiondesiptiondescription',
 		// 	size: 'NewBorn ',
-		// 	sold_price: 100
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id2',
+		// 	description:
+		// 		'dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription ',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id3',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id2',
+		// 	description:
+		// 		'dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription dptiondesiptiondescription ',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// },
+		// {
+		// 	id: 'id3',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
 		// }
-		// {
-		// 	id: 'id4',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-		// {
-		// 	id: 'id5',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-		// {
-		// 	id: 'id6',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-		// {
-		// 	id: 'id7',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-		// {
-		// 	id: 'id8',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-		// {
-		// 	id: 'id9',
-		// 	description: 'dptiondesiptiondescription',
-		// 	size: 'NewBorn ',
-		// 	sold_price: 100
-		// },
-	];
-
-	$: total = products.reduce(
-		(accumulator, currentValue) => accumulator + (currentValue.sold_price ?? 0),
-		0
-	);
+	]);
 
 	const qrDetectedHandler = async ({ detail: { data } }: CustomEvent) => {
 		if (data.type != 'products') {
@@ -106,12 +142,7 @@
 			return;
 		}
 
-		products.push({
-			id: product.id,
-			description: product.description,
-			size: product.size,
-			sold_price: product.sold_price
-		});
+		products.push(product);
 
 		products = products;
 
@@ -122,37 +153,37 @@
 		alertRef.showAlert(error, 'alert-error');
 	};
 
-	const removeElement = (event: any) => {
-		if (event.target?.parentElement?.id) {
-			const ID = event.target?.parentElement?.id;
-			products = products.filter((item) => item.id != ID);
-		}
-	};
-	export let form;
-	$: ({ errors, success } = form ?? {
-		errors: {} as Record<string, string>,
-		success: false
-	});
-
-	$: {
+	$effect(() => {
 		if (success && alertRef) {
 			alertRef.showAlert('facturaccion exitosa!', 'alert-success');
 			products = [];
+			modalRef.openModal();
 		}
-	}
+	});
 
-	$: {
-		if (Object.keys(errors).length && alertRef) {
+	$effect(() => {
+		if (errors && Object.keys(errors).length > 0) {
 			const error_msg = Object.values(errors).join('\n');
 			alertRef.showAlert(error_msg, 'alert-error');
 		}
-	}
+	});
+
+	$effect(() => {
+		if (productsTableRef && products.length) {
+			productsTableRef.scrollTop = productsTableRef.scrollHeight;
+		}
+	});
 
 	const handleSubmit = ({ formData }: any) => {
 		creating = true;
 
 		formData.append('total', total);
-		formData.append('productsId', JSON.stringify(products.map((p) => p.id)));
+		formData.append('productsId', JSON.stringify($state.snapshot(products).map((p) => p.id)));
+		formData.append('tasaBCV', tasaBCV);
+
+		if (acceptBs) {
+			formData.append('partialOnInvoice', partialOnInvoice);
+		}
 		formData.append('clientId', client.id);
 		formData.append('sellerId', seller.id);
 
@@ -161,86 +192,102 @@
 			creating = false;
 		};
 	};
-
-	afterUpdate(() => {
-		if (productsTableRef) productsTableRef.scrollTop = productsTableRef.scrollHeight;
-	});
 </script>
 
 <Alert bind:this={alertRef} class="top-16 self-start" />
-<div class={isScanning ? 'flex h-screen' : 'hidden'}>
+
+<Modal
+	bind:this={modalRef}
+	header="Success!"
+	content="La venta se procesó correctamente."
+	button_text="cerrar"
+	on_close={() => {
+		console.log('hola');
+	}}
+/>
+
+<div
+	class="flex max-w-[700px] flex-col items-center gap-4 overflow-x-hidden overflow-y-auto p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
+	bind:this={productsTableRef}
+>
 	<QrReader
 		bind:this={qrReader}
 		bind:isScanning
-		bind:readedValue
 		on:qr-invalid={qrInvalidHandler}
 		on:qr-detected={qrDetectedHandler}
 		validator={qrvalidator}
 	/>
-</div>
-{#if !isScanning}
-	<div
-		class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
-	>
-		<div
-			class="flex w-full flex-col items-center gap-4 p-4 select-none"
-			bind:this={productsTableRef}
-			id="products-table"
-		>
-			<h1 class="text-center text-2xl font-semibold">Factura</h1>
-			<span class="w-5/6 text-center text-sm"
-				>Escanee códigos QR para agregar elementos a la factura</span
+	{#if !isScanning}
+		{#if creating}
+			<span class="loading loading-ring loading-xl m-auto"></span>
+		{:else}
+			<SellTicket bind:products {tasaBCV} bind:total />
+
+			<form
+				action=""
+				method="post"
+				use:enhance={handleSubmit}
+				class="grid w-full grid-cols-1 gap-2 p-2 transition-all duration-500 ease-out md:grid-cols-2"
 			>
+				<fieldset>
+					<legend class="text-sm">abono en bs: </legend>
+					<label class="toggle text-base-content">
+						<input type="checkbox" bind:checked={acceptBs} name="accept_bs" />
 
-			<table class="table-xs table-pin-rows table-pin-cols w-full break-words">
-				<thead>
-					<tr>
-						<!-- <th>ID</th> -->
-						<th>Description</th>
-						<th>Size</th>
-						<th>Price</th>
-						<th></th>
-					</tr>
-				</thead>
-
-				<tbody>
-					{#if products.length > 0}
-						{#each products as product (product.id)}
-							<tr class=" cursor-pointer">
-								<!-- <td class="text-ellipsis">{product.id}</td> -->
-								<td class="">{product.description}</td>
-								<td class="">{product.size}</td>
-								<td class="">{product.sold_price}</td>
-								<td><button onclick={removeElement} id={product.id}><TimesIcon /></button></td>
-							</tr>
-						{/each}
-					{/if}
-				</tbody>
-			</table>
-
-			{#if products.length > 0}
-				<h2>total:{total}</h2>
-			{:else}
-				<span class="w-5/6 bg-zinc-100 p-4 text-center text-sm">No hay elementos.</span>
-			{/if}
-
-			<div class="flex w-full justify-around">
-				<button onclick={qrReader.startScanner} class="btn">
-					<QrIcon />
-					Scanear QR</button
-				>
-
-				<form action="" method="post" use:enhance={handleSubmit}>
-					{#if creating}
-						<span class="loading loading-ring loading-xl"></span>
-					{:else}
-						<button class="btn" type="submit">
-							<CartIcon />
-							Comprar
-						</button>
-					{/if}
-				</form>
-			</div>
-		</div>
-	</div>
-{/if}
+						<svg
+							aria-label="enabled"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="4"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M18 6 6 18" />
+							<path d="m6 6 12 12" />
+						</svg>
+						<svg aria-label="disabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<g
+								stroke-linejoin="round"
+								stroke-linecap="round"
+								stroke-width="4"
+								fill="none"
+								stroke="currentColor"
+							>
+								<path d="M20 6 9 17l-5-5"></path>
+							</g>
+						</svg>
+					</label>
+					<span class="text-sm">tasa del día ({tasaBCV}) <strong>BS/USD</strong> </span>
+				</fieldset>
+				<fieldset>
+					<input
+						type="number"
+						name="partial_on_invoice"
+						class="input validator"
+						disabled={!acceptBs}
+						bind:value={partialOnInvoice}
+						step=".01"
+						min="0"
+						max={parseFloat(String(tasaBCV * (total / 100))).toFixed(2)}
+						placeholder="Type here"
+					/>
+					<div class="validator-hint">
+						max bs:{parseFloat(String(tasaBCV * (total / 100))).toFixed(2)}
+					</div>
+				</fieldset>
+				<div class=" flex w-full justify-around gap-4 md:col-span-2">
+					<button onclick={qrReader.startScanner} class="btn">
+						<QrIcon />
+						Scanear QR</button
+					>
+					<button class="btn" type="submit">
+						<CartIcon />
+						Comprar
+					</button>
+				</div>
+			</form>
+		{/if}
+	{/if}
+</div>

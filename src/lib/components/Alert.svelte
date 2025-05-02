@@ -3,7 +3,7 @@
 
 	import { fade } from 'svelte/transition';
 	export let message = '';
-	export let type: AlertType = 'alert-info';
+	export let type: AlertType = 'alert-info'; 
 	export let duration = 3000;
 	export let show = false;
 
@@ -26,7 +26,7 @@
 {#if show}
 	<div
 		transition:fade
-		class={`${$$restProps.class} alert ${type} alert-soft absolute w-full rounded-none`}
+		class={`${$$restProps.class} alert ${type} alert-soft absolute z-50 w-full rounded-none`}
 	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
