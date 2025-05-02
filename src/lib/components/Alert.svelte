@@ -3,7 +3,7 @@
 
 	import { fade } from 'svelte/transition';
 	export let message = '';
-	export let type: AlertType = 'alert-info'; 
+	export let type: AlertType = 'alert-info';
 	export let duration = 3000;
 	export let show = false;
 

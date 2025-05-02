@@ -21,7 +21,10 @@
 	interface FormState {
 		errors?: any;
 		success?: boolean;
-		result?: unknown;
+		result?: {
+			payment_details: Record<string, { value: number; exchange: number }>;
+			total: number;
+		};
 	}
 
 	interface Props {
@@ -33,7 +36,7 @@
 
 	let { tasaBCV, client, seller, supabase } = $state<PageData>(data);
 
-	const { errors, success } = $derived(form ?? {});
+	const { errors, success, result } = $derived(form ?? {});
 
 	let alertRef: Alert;
 	let qrReader: QrReader;
@@ -45,6 +48,8 @@
 	let isScanning = $state(false);
 	let total = $state(0);
 	let creating = $state(false);
+
+	let payment_details_result: Record<string, { value: number; exchange: number }> = $state({});
 
 	let products: Array<Product> = $state([
 		{
@@ -152,6 +157,9 @@
 	const qrInvalidHandler = ({ detail: { error } }: CustomEvent) => {
 		alertRef.showAlert(error, 'alert-error');
 	};
+	$effect(() => {
+		if (success && result?.payment_details) payment_details_result = result.payment_details;
+	});
 
 	$effect(() => {
 		if (success && alertRef) {
@@ -177,13 +185,16 @@
 	const handleSubmit = ({ formData }: any) => {
 		creating = true;
 
+		let payment_details: Record<string, number> = {};
+
 		formData.append('total', total);
 		formData.append('productsId', JSON.stringify($state.snapshot(products).map((p) => p.id)));
-		formData.append('tasaBCV', tasaBCV);
 
 		if (acceptBs) {
-			formData.append('partialOnInvoice', partialOnInvoice);
+			payment_details['VES'] = partialOnInvoice;
 		}
+
+		formData.append('paymentPerCurrency', JSON.stringify(payment_details));
 		formData.append('clientId', client.id);
 		formData.append('sellerId', seller.id);
 
@@ -204,7 +215,27 @@
 	on_close={() => {
 		console.log('hola');
 	}}
-/>
+>
+	<div class="my-3 flex aspect-square w-2/3 flex-col items-center justify-center border p-2">
+		<h3>detalles</h3>
+		<table class="table-xs table-pin-rows table-pin-cols table-zebra w-full">
+			<tbody>
+				{#each Object.entries(payment_details_result) as payment_currency_details}
+					<tr>
+						<td class="content-start text-center text-sm">{payment_currency_details[0]}</td>
+						<td class="content-start text-center text-sm"
+							>{parseFloat(String(payment_currency_details[1].exchange / 100)).toFixed(2)}</td
+						>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+
+		<span
+			>total: {parseFloat(String((result?.total ?? 0) / 100)).toFixed(2)} <strong>USD</strong></span
+		>
+	</div>
+</Modal>
 
 <div
 	class="flex max-w-[700px] flex-col items-center gap-4 overflow-x-hidden overflow-y-auto p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
@@ -261,6 +292,7 @@
 					</label>
 					<span class="text-sm">tasa del día ({tasaBCV}) <strong>BS/USD</strong> </span>
 				</fieldset>
+
 				<fieldset>
 					<input
 						type="number"

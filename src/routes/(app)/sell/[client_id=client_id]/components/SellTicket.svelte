@@ -76,7 +76,7 @@
 			{/each}
 		</tbody>
 	</table>
-	<h2 class="text-sm p-2">
+	<h2 class="p-2 text-sm">
 		<strong>total:</strong>{parseFloat(String(total / 100)).toFixed(2)}
 		<strong>USD</strong>/{parseFloat(String(tasaBCV * (total / 100))).toFixed(2)}
 		<strong>BSV</strong>

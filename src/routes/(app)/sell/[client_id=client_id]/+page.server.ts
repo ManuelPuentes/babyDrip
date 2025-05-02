@@ -1,6 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getTasaBCV } from '$lib/api/getTasaBcv.api';
+import { calculatePaymentDetails } from './utils/proccess-payment';
 
 export const load: PageServerLoad = async ({ params, locals: { user, supabase } }) => {
 	const { data: seller } = await supabase
@@ -32,20 +33,10 @@ export const actions: Actions = {
 
 		const clientId = String(data.clientId);
 		const sellerId = String(data.sellerId);
-		const productsId = JSON.parse(String(data.productsId));
+		const productsId = JSON.parse(data.productsId as string);
 
 		const total = Number(data.total);
-		const acceptBs = Boolean(data.accept_bs)
-		const partialOnInvoice = Number(data.partial_on_invoice)
-
-
-
-		console.log(total);
-		console.log(partialOnInvoice);
-		console.log(acceptBs);
-
-
-
+		const paymentPerCurrency = JSON.parse(data.paymentPerCurrency as string);
 
 		if (total == 0) errors.total = 'total price cant be 0';
 		if (productsId.length == 0) errors.products = 'products cant be 0';
@@ -54,41 +45,51 @@ export const actions: Actions = {
 			return fail(400, { errors });
 		}
 
-		return {
-			success: true,
-		};
+		try {
+			const payment_details = await calculatePaymentDetails({
+				payment_per_currency: paymentPerCurrency,
+				total
+			});
 
-		// const { error } = await supabase
-		// 	.from('sell')
-		// 	.insert({
-		// 		client: clientId,
-		// 		seller: sellerId,
-		// 		total
-		// 	})
-		// 	.select()
-		// 	.single()
-		// 	.then(({ data: sell }) => {
-		// 		return supabase
-		// 			.from('products')
-		// 			.update({
-		// 				sell_id: sell?.id
-		// 			})
-		// 			.in('id', productsId);
-		// 	});
+			// esto debe agregarse en supabase method
 
-		// if (error) {
-		// 	errors.update = 'error updating products data';
+			const { error } = await supabase
+				.from('purchase_order')
+				.insert({
+					client: clientId,
+					seller: sellerId,
+					total,
+					payment_details
+				})
+				.select()
+				.single()
+				.then(({ data: purchase_order }) => {
+					return supabase
+						.from('products')
+						.update({
+							purchase_order_id: purchase_order?.id
+						})
+						.in('id', productsId);
+				});
 
-		// 	console.log(error);
+			if (error) {
+				errors.update = 'error creating purchase order';
+				return fail(400, { errors });
+			}
 
-		// 	// errors.error = error;
-		// 	return fail(400, { errors });
-		// }
-
-		// return {
-		// 	success: true,
-		// 	errors: {},
-		// 	message: 'Form submitted successfully!'
-		// };
+			return {
+				success: true,
+				result: {
+					payment_details,
+					total
+				}
+			};
+		} catch (error) {
+			return fail(500, {
+				error: {
+					message: 'Server error during sell'
+				}
+			});
+		}
 	}
 } satisfies Actions;
