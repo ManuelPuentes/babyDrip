@@ -12,8 +12,6 @@
 	let load_trigger: HTMLElement;
 
 	onMount(async (): Promise<any> => {
-		console.log(data);
-
 		const observer = new IntersectionObserver(
 			async () => {
 				if (loading || pageNumber >= maxPageNumber) return;

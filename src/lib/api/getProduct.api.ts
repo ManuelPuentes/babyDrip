@@ -5,7 +5,7 @@ export const getProduct = async (supabase: SupabaseClient, productId: string) =>
 		.from('products')
 		.select('id,  description, size, sold_price, stored_at, cost')
 		.eq('id', productId)
-		.is('sell_id', null)
+		.is('purchase_order_id', null)
 		.single();
 
 	return { data, error };

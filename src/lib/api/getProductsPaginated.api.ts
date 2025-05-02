@@ -8,7 +8,7 @@ export const getProductsPaginatedData = async (pageNumber: number, supabase: Sup
 	const { data, count } = await supabase
 		.from('products')
 		.select('id,  description, size, sold_price, cost, stored_at', { count: 'exact' })
-		.is('sell_id', null)
+		.is('purchase_order_id', null)
 		.range(offset, limit);
 
 	return data ? { products: data, count } : { products: [], count: 0 };
