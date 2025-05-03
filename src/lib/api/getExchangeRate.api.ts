@@ -11,8 +11,7 @@ export async function getExchangeRate(currency: PaymentCurrenciesEnum) {
 		}
 		const data = await response.json();
 		return data.conversion_rate;
-	} catch (error: any) {
-		console.error('Error al consultar el exchange:', error.message);
+	} catch {
 		return null;
 	}
 }

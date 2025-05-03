@@ -6,8 +6,7 @@ import { productSchema } from '$lib/schemas/productSchema';
 import type { Warehouse } from '$lib/interfaces/warehouse.interface';
 import type { Product } from '$lib/interfaces/product.interface';
 import { getWarehouse } from '$lib/api/getWarehouse.api';
-import { map, type ZodIssue } from 'zod';
-import InvalidRows from './components/InvalidRows.svelte';
+import { type ZodIssue } from 'zod';
 import { AddProductsErrorTypesEnum, type AddProductError } from './interfaces/interfaces';
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
@@ -110,7 +109,7 @@ export const actions: Actions = {
 				if (success) {
 					validRows.push(data);
 				} else {
-					let row_errors: Record<string, string> = {};
+					const row_errors: Record<string, string> = {};
 
 					_parseErrors.errors.map((e: ZodIssue) => {
 						row_errors[String(e.path[0])] = String(e.message);
@@ -181,7 +180,7 @@ export const actions: Actions = {
 			if (success) {
 				validRows.push(data);
 			} else {
-				let row_errors: Record<string, string> = {};
+				const row_errors: Record<string, string> = {};
 
 				_parseErrors.errors.map((e: ZodIssue) => {
 					row_errors[String(e.path[0])] = String(e.message);

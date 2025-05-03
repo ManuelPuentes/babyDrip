@@ -18,8 +18,7 @@ export async function getTasaBCV() {
 		const tasa = $('#dolar strong').text().trim().replace(',', '.');
 
 		return parseFloat(parseFloat(tasa).toFixed(2));
-	} catch (error: any) {
-		console.error('Error al consultar el BCV:', error.message);
+	} catch {
 		return null;
 	}
 }

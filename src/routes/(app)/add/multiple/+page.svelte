@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CheckIcon from '$lib/icons/check.icon.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import type { PageData } from './$types';
 	import InvalidRows from './components/InvalidRows.svelte';

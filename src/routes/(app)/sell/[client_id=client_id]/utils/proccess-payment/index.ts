@@ -8,7 +8,7 @@ export const calculatePaymentDetails = async ({
 	total: number;
 	payment_per_currency: Record<PaymentCurrenciesEnum, number>;
 }) => {
-	let details: Record<string, { value: number; exchange: number }> = {};
+	const details: Record<string, { value: number; exchange: number }> = {};
 
 	await Promise.all(
 		Object.entries(payment_per_currency).map(async ([key, value]: [string, number]) => {

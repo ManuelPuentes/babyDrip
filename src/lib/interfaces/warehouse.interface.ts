@@ -1,6 +1,6 @@
 export interface Warehouse {
-	id?: string;
+	id: string;
 	created_at?: Date;
-	name?: string;
+	name: string;
 	printed?: boolean;
 }

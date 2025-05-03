@@ -22,7 +22,7 @@
 		</thead>
 
 		<tbody>
-			{#each products as product, index}
+			{#each products as product, index (product.id)}
 				<tr class="cursor-pointer hover:!bg-zinc-200">
 					<td class="content-start text-sm">{index + 1}</td>
 					<td class="content-start text-sm">{product.description}</td>

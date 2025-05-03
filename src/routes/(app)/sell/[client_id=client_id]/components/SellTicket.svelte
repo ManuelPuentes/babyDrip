@@ -9,8 +9,8 @@
 	}
 	let { products = $bindable([]), tasaBCV, total = $bindable(0) }: Props = $props();
 
-	const removeElement = (event: any) => {
-		if (event.target?.parentElement?.id) {
+	const removeElement = (event: MouseEvent) => {
+		if (event.target instanceof HTMLElement && event.target.parentElement?.id) {
 			const ID = event.target?.parentElement?.id;
 			products = products.filter((item) => item.id != ID);
 		}
@@ -60,7 +60,7 @@
 		</thead>
 
 		<tbody>
-			{#each products as product, index}
+			{#each products as product, index (product.id)}
 				<tr class="cursor-pointer hover:!bg-zinc-200">
 					<td class="content-start text-sm">{index + 1}</td>
 					<td class="content-start text-sm">{product.description}</td>

@@ -51,14 +51,13 @@ export const actions: Actions = {
 				total
 			});
 
-			const { error } = await supabase
-				.rpc('create_purchase_order', {
-					client_id: clientId,
-					seller_id: sellerId,
-					total,
-					payment_details,
-					product_ids: productsId,
-				});
+			const { error } = await supabase.rpc('create_purchase_order', {
+				client_id: clientId,
+				seller_id: sellerId,
+				total,
+				payment_details,
+				product_ids: productsId
+			});
 
 			if (error) {
 				errors.update = 'error creating purchase order';
@@ -72,7 +71,7 @@ export const actions: Actions = {
 					total
 				}
 			};
-		} catch (error) {
+		} catch {
 			return fail(500, {
 				error: {
 					message: 'Server error during sell'

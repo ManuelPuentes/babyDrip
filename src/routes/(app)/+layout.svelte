@@ -7,7 +7,7 @@
 	import CartIcon from '$lib/icons/cart.icon.svelte';
 	import AddIcon from '$lib/icons/add.icon.svelte';
 	import QrIcon from '$lib/icons/qr.icon.svelte';
-	import FileIcon from '$lib/icons/file.icon.svelte';
+	// import FileIcon from '$lib/icons/file.icon.svelte';
 	import GraphIcon from '$lib/icons/graph.icon.svelte';
 	import SearchIcon from '$lib/icons/search.icon.svelte';
 
@@ -15,11 +15,11 @@
 
 	let { session, supabase } = data;
 
-	let submenu: boolean = false;
+	// let submenu: boolean = false;
 
-	const toggleSubmenu = () => {
-		submenu = !submenu;
-	};
+	// const toggleSubmenu = () => {
+	// 	submenu = !submenu;
+	// };
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {

@@ -11,7 +11,7 @@
 	let products = $state(data);
 
 	let alertRef: Alert;
-	let modalRef: any;
+	let modalRef: Modal;
 	let successMessage: string = $state('');
 
 	let formated_products = $derived.by(() => {
@@ -40,7 +40,6 @@
 		return async ({ result }: any) => {
 			const {
 				type,
-				status,
 				data
 			}: {
 				type: 'success' | 'failure';
@@ -84,7 +83,7 @@
 	class="flex flex-col gap-2"
 >
 	<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-		{#each formated_products as element, index}
+		{#each formated_products as element, index (index)}
 			<div class="grid grid-cols-2 gap-2 rounded-lg border border-zinc-400 p-5">
 				<fieldset class="fieldset col-span-1 text-sm">
 					<legend class="fieldset-legend font-light">cost</legend>

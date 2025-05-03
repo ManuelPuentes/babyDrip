@@ -2,7 +2,7 @@
 	import CheckIcon from '$lib/icons/check.icon.svelte';
 
 	interface Props {
-		warehouses: Array<any>;
+		warehouses: Array<{ name: string; id: string }>;
 	}
 
 	const { warehouses }: Props = $props();
