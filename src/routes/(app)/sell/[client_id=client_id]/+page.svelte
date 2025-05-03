@@ -17,6 +17,7 @@
 	import { getProduct } from '$lib/api/getProduct.api.js';
 	//utils
 	import qrvalidator from '$lib/validator/qr.validator.js';
+	import { goto } from '$app/navigation';
 
 	interface FormState {
 		errors?: any;
@@ -52,14 +53,14 @@
 	let payment_details_result: Record<string, { value: number; exchange: number }> = $state({});
 
 	let products: Array<Product> = $state([
-		{
-			id: 'id',
-			description: 'dptiondesiptiondescription',
-			size: 'NewBorn ',
-			sold_price: 100,
-			cost: 0,
-			stored_at: ''
-		}
+		// {
+		// 	id: 'id',
+		// 	description: 'dptiondesiptiondescription',
+		// 	size: 'NewBorn ',
+		// 	sold_price: 100,
+		// 	cost: 0,
+		// 	stored_at: ''
+		// }
 		// {
 		// 	id: 'id2',
 		// 	description:
@@ -213,7 +214,7 @@
 	content="La venta se procesó correctamente."
 	button_text="cerrar"
 	on_close={() => {
-		console.log('hola');
+		goto(`/sell/${client.id}`);
 	}}
 >
 	<div class="my-3 flex aspect-square w-2/3 flex-col items-center justify-center border p-2">

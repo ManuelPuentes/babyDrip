@@ -25,7 +25,7 @@
 			{@render children()}
 		{/if}
 
-		<div class="modal-action my-2 border">
+		<div class="modal-action my-2">
 			<form method="dialog">
 				<button class="btn">{button_text}</button>
 			</form>

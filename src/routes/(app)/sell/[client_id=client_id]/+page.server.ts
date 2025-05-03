@@ -51,25 +51,13 @@ export const actions: Actions = {
 				total
 			});
 
-			// esto debe agregarse en supabase method
-
 			const { error } = await supabase
-				.from('purchase_order')
-				.insert({
-					client: clientId,
-					seller: sellerId,
+				.rpc('create_purchase_order', {
+					client_id: clientId,
+					seller_id: sellerId,
 					total,
-					payment_details
-				})
-				.select()
-				.single()
-				.then(({ data: purchase_order }) => {
-					return supabase
-						.from('products')
-						.update({
-							purchase_order_id: purchase_order?.id
-						})
-						.in('id', productsId);
+					payment_details,
+					product_ids: productsId,
 				});
 
 			if (error) {
