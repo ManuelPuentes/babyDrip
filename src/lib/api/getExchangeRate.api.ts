@@ -1,8 +1,8 @@
 import { PaymentCurrenciesEnum } from '$lib/enums/allowed_payments_currencies.enum';
-import { PUBLIC_EXCHANGE_API_KEY } from '$env/static/public';
+import { EXCHANGE_API_KEY } from '$env/static/private';
 
 export async function getExchangeRate(currency: PaymentCurrenciesEnum) {
-	const url = `https://v6.exchangerate-api.com/v6/${PUBLIC_EXCHANGE_API_KEY}/pair/USD/${currency}`;
+	const url = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/pair/USD/${currency}`;
 
 	try {
 		const response = await fetch(url);
