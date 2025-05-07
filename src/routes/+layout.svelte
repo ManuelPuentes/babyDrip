@@ -34,7 +34,7 @@
 
 	<div class="flex-1 overflow-auto">{@render children()}</div>
 
-	<div class="h-16">
+	<div class="h-16 md:hidden">
 		{#if session}
 			<Dock />
 		{/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api.js';
-	import ProductsTable from '$lib/components/Products.Table.svelte';
+	import ProductsTable from './components/Products.Table.svelte';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -34,11 +34,7 @@
 	});
 </script>
 
-<div
-	class="flex max-w-[700px] flex-col items-center overflow-x-hidden overflow-y-auto border p-4 select-none md:m-auto md:max-h-1/3 lg:min-h-1/2 lg:w-1/2"
->
-	<h1 class="p-3 text-2xl font-semibold">Inventario</h1>
-
+<div class="flex w-full select-none">
 	<ProductsTable data={products_list} />
 
 	<div id="load-more-trigger" style="height: 20px;" bind:this={load_trigger}></div>

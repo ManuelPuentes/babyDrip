@@ -5,7 +5,6 @@
 	import QrIcon from '$lib/icons/qr.icon.svelte';
 	import GraphIcon from '$lib/icons/graph.icon.svelte';
 	import SearchIcon from '$lib/icons/search.icon.svelte';
-	import type { Session } from '@supabase/supabase-js';
 
 	interface Props {
 		logout: () => Promise<void>;
