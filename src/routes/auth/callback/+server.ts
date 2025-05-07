@@ -16,5 +16,5 @@ export const GET = async ({ url, locals }) => {
 		throw error(400, 'exchange for session failed');
 	}
 
-	throw redirect(303, '/dashboard');
+	// throw redirect(303, '/dashboard');
 };
