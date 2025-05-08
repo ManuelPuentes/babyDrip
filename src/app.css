@@ -8,6 +8,11 @@
 	@apply text-3xl font-bold lg:text-5xl;
 }
 
+
+.loader-ring {
+	@apply loading loading-ring loading-sm lg:loading-xl;
+}
+
 @plugin "daisyui" {
 	/* themes: light --default, dark; */
 	/* themes: light --default, dark --prefersdark, retro, cyberpunk, nord, valentine, aqua; */
