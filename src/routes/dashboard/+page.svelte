@@ -5,7 +5,7 @@
 
 	let { data } = $props();
 
-	const { maxPageNumber, supabase, products } = $state(data);
+	const { maxPageNumber, supabase, products, warehouses } = $state(data);
 	let pageNumber = 1;
 	let load_trigger: HTMLElement;
 	let loading: boolean = $state(false);
@@ -61,6 +61,11 @@
 			product.size.toLocaleLowerCase().includes(filter_value.toLocaleLowerCase())
 		);
 	};
+
+	const filterByWarehouse = (event: Event) => {
+		const filter_value = getInputValue(event);
+		filtered_products = products.filter((product) => product.stored_at == filter_value);
+	};
 </script>
 
 <div class="grid grid-cols-4 gap-4 p-4">
@@ -76,6 +81,13 @@
 	<label class="input col-span-2 w-full lg:col-span-1">
 		<input type="number" class="grow" placeholder="Precio" onchange={filterBySoldPrice} />
 	</label>
+
+	<select class="select col-span-2 lg:col-span-1" name="warehouse" onchange={filterByWarehouse}>
+		<option disabled selected value="">Almacen</option>
+		{#each warehouses as warehouse (warehouse.id)}
+			<option value={warehouse.id}>{warehouse.name}</option>
+		{/each}
+	</select>
 </div>
 
 <div class="flex w-full flex-col p-3 select-none lg:p-5">
