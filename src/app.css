@@ -8,9 +8,16 @@
 	@apply text-3xl font-bold lg:text-5xl;
 }
 
-
 .loader-ring {
 	@apply loading loading-ring loading-sm lg:loading-xl;
+}
+
+.form_error {
+	@apply overflow-hidden text-ellipsis text-red-500;
+}
+
+.form_field_hint {
+	@apply validator-hint overflow-hidden text-ellipsis;
 }
 
 @plugin "daisyui" {

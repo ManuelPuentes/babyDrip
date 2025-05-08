@@ -5,12 +5,15 @@
 	import { enhance } from '$app/forms';
 	import Alert from '$lib/components/Alert.svelte';
 	import type { Product } from '$lib/interfaces/product.interface';
+	import Modal from '$lib/components/Modal.svelte';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
 	let { warehouses, product } = data;
 
 	let alertRef: Alert;
+	let modalRef: Modal;
 	let creating = false;
 
 	export let form;
@@ -23,6 +26,7 @@
 	$: {
 		if (success && alertRef) {
 			alertRef.showAlert('producto actualizado de forma exitosa', 'alert-success');
+			modalRef.openModal();
 		}
 	}
 
@@ -45,22 +49,30 @@
 	};
 </script>
 
-<div
-	class="flex max-w-[700px] flex-col items-center p-4 select-none lg:m-auto lg:min-h-1/2 lg:w-1/2"
->
-	<Alert bind:this={alertRef} class="top-16 self-start" />
+<Alert bind:this={alertRef} class="top-16 self-start" />
 
-	<h1 class="text-2xl font-semibold">Actualizar Producto</h1>
+<Modal
+	bind:this={modalRef}
+	header="Success!"
+	content={`Producto actualizado correctamente!`}
+	button_text="Finalizar"
+	on_close={() => {
+		goto('/dashboard');
+	}}
+/>
+
+<div class="flex flex-col items-center justify-center p-2 select-none lg:h-full">
+	<h1 class="title">Actualizar Producto:</h1>
 
 	<form
 		action=""
 		method="post"
-		class=" m-auto flex w-full max-w-[400px] flex-col items-center justify-center"
+		class="grid w-full grid-cols-2 gap-2 p-4 lg:aspect-square lg:w-1/3"
 		use:enhance={handleSubmit}
 		on:submit|preventDefault
 	>
-		<fieldset class="fieldset flex w-4/5 flex-col items-center">
-			<legend class="fieldset-legend">costo</legend>
+		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+			<legend class="fieldset-legend text-base-format">costo</legend>
 			<input
 				type="number"
 				name="cost"
@@ -75,13 +87,11 @@
 
 			{#if errors?.cost}
 				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.cost}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset flex w-4/5 flex-col items-center">
-			<legend class="fieldset-legend">precio de venta</legend>
+		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+			<legend class="fieldset-legend text-base-format">precio de venta:</legend>
 			<input
 				type="number"
 				name="sold_price"
@@ -98,13 +108,11 @@
 
 			{#if errors?.sold_price}
 				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.sold_price}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset flex w-4/5 flex-col items-center">
-			<legend class="fieldset-legend">talla</legend>
+		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+			<legend class="fieldset-legend text-base-format">talla:</legend>
 
 			<input
 				type="text"
@@ -119,13 +127,11 @@
 
 			{#if errors?.size}
 				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.size}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset flex w-4/5 flex-col items-center">
-			<legend class="fieldset-legend">almacen</legend>
+		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+			<legend class="fieldset-legend text-base-format">almacen:</legend>
 
 			<select class="select validator w-full" required name="warehouse">
 				{#each warehouses as warehouse (warehouse.id)}
@@ -136,12 +142,10 @@
 					{/if}
 				{/each}
 			</select>
-
-			<p class="validator-hint overflow-hidden text-ellipsis">debes seleccionar 1</p>
 		</fieldset>
 
-		<fieldset class="fieldset flex w-4/5 flex-col items-center">
-			<legend class="fieldset-legend">descripcion del producto</legend>
+		<fieldset class="fieldset col-span-2 w-full">
+			<legend class="fieldset-legend text-base-format">descripcion del producto:</legend>
 
 			<textarea
 				name="description"
@@ -153,15 +157,13 @@
 			></textarea>
 			{#if errors?.description}
 				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.description}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
 			{/if}
 		</fieldset>
 
 		{#if creating}
-			<span class="loading loading-ring loading-xl"></span>
+			<span class="loader-ring col-span-2 place-self-center"></span>
 		{:else}
-			<button class="btn border border-[#e5e5e5]" type="submit">
+			<button class="btn col-span-2 place-self-center" type="submit">
 				Update<CheckIcon />
 			</button>
 		{/if}

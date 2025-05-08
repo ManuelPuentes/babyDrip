@@ -4,14 +4,10 @@ import { error, fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getWarehouses } from '$lib/api/getWarehouses.api';
 import type { Warehouse } from '$lib/interfaces/warehouse.interface';
+import { getProduct } from '$lib/api/getProduct.api';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
-	const { data: product } = await supabase
-		.from('products')
-		.select()
-		.eq('id', params.product_id)
-		.is('sell_id', null)
-		.single();
+	const { data: product } = await getProduct(supabase, params.product_id);
 
 	if (!product) throw error(404, { message: 'product not found' });
 
