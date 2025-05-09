@@ -11,7 +11,9 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 
 	if (!warehouse) throw error(404, { message: 'warehouse not found' });
 
-	const { count, products } = await getProductsPaginatedData(0, supabase, { stored_at: params.warehouse_id });
+	const { count, products } = await getProductsPaginatedData(0, supabase, {
+		stored_at: params.warehouse_id
+	});
 
 	const maxPageNumber = count ? Math.ceil(count / Number(PUBLIC_PAGE_SIZE)) : 0;
 
@@ -19,6 +21,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		warehouse: Warehouse;
 		maxPageNumber: number;
 		pageSize: number;
-		products: Array<Product>
+		products: Array<Product>;
 	};
 };

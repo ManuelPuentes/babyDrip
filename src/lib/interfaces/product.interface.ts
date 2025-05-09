@@ -2,7 +2,7 @@ export interface Product {
 	id?: string;
 	created_at?: string;
 	updated_at?: string;
-	sell_id?: string | null;
+	purchase_order_id?: string | null;
 	printed?: boolean;
 
 	cost: number;

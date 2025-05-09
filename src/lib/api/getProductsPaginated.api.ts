@@ -1,34 +1,36 @@
 import { PUBLIC_PAGE_SIZE } from '$env/static/public';
 import type { Product } from '$lib/interfaces/product.interface';
+import type { Database } from '$lib/supabase/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { buildQueryFilter, type FilterCondition } from './queryBuilder';
 
-export const getProductsPaginatedData = async (pageNumber: number, supabase: SupabaseClient, filters?: Partial<Product>) => {
+export const getProductsPaginatedData = async ({
+	supabase,
+	pageNumber,
+	select,
+	filters
+}: {
+	supabase: SupabaseClient<Database>;
+	filters?: Array<FilterCondition<Product>>;
+	select?: Array<keyof Product>;
+	pageNumber: number;
+}) => {
 	const pageSize = Number(PUBLIC_PAGE_SIZE);
 	const offset = pageNumber * pageSize;
 	const limit = (pageNumber + 1) * pageSize - 1;
 
-	if (filters) {
-		const { data, count } = await supabase
-			.from('products')
-			.select('id,  description, size, sold_price, cost, stored_at', { count: 'exact' })
-			.is('purchase_order_id', null)
-			.match(filters)
-			.range(offset, limit);
+	const query = buildQueryFilter<Product>({
+		supabaseClient: supabase,
+		table: 'products',
+		select,
+		filters,
+		count: 'exact'
+	});
 
-		return data ? { products: data, count } : { products: [], count: 0 };
+	const { data, count }: { data: Array<Partial<Product>>; count: number } = await query.range(
+		offset,
+		limit
+	);
 
-	} else {
-		const { data, count } = await supabase
-			.from('products')
-			.select('id,  description, size, sold_price, cost, stored_at', { count: 'exact' })
-			.is('purchase_order_id', null)
-			.range(offset, limit);
-		return data ? { products: data, count } : { products: [], count: 0 };
-
-	}
-
+	return { data, count };
 };
-
-
-
-
