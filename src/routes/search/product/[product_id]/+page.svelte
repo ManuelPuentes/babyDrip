@@ -57,6 +57,7 @@
 				required
 				placeholder="costo"
 				pattern="[0-9]*"
+				step="0.1"
 				aria-invalid={$errors.cost ? 'true' : undefined}
 				bind:value={$form.cost}
 			/>
@@ -78,6 +79,7 @@
 				required
 				placeholder="precio de venta"
 				pattern="[0-9]*"
+				step="0.1"
 				aria-invalid={$errors.sold_price ? 'true' : undefined}
 				bind:value={$form.sold_price}
 			/>

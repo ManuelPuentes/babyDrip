@@ -5,7 +5,7 @@ export const productSchema = z
 		size: z.string().min(1),
 		cost: z.number().gt(0),
 		sold_price: z.number().gt(0),
-		description: z.string().min(11111111110),
+		description: z.string().min(10),
 		stored_at: z.string().min(10),
 		printed: z.boolean().default(false)
 	})

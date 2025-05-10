@@ -1,40 +1,50 @@
-import type { Product } from '$lib/interfaces/product.interface';
-import { fail, type Actions } from '@sveltejs/kit';
+import { error, type Actions, fail } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
+import { message, superValidate } from 'sveltekit-superforms';
 
-export const actions: Actions = {
+import { getProduct } from '$lib/api/getProduct.api';
+import { getWarehouses } from '$lib/api/getWarehouses.api';
+import { productSchema } from '$lib/schemas/productSchema';
+import { FilterType } from '$lib/api/queryBuilder.js';
+
+export const load = async ({ locals: { supabase } }) => {
+	const form = await superValidate(zod(productSchema));
+
+	const { data: warehouses } = await getWarehouses({
+		supabase
+	});
+
+	return { form, warehouses };
+};
+
+export const actions = {
 	default: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const data = Object.fromEntries(formData) as {
-			cost: string;
-			sold_price: string;
-			size: string;
-			warehouse: string;
-			description: string;
-		};
+		const form = await superValidate(request, zod(productSchema));
 
-		const { cost, sold_price, size, warehouse, description } = data;
-		const errors: Record<string, string> = {};
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		const { cost, sold_price } = form.data;
 
 		try {
 			await supabase
 				.from('products')
-				.insert({
-					cost: Number(cost),
-					sold_price: Number(sold_price),
-					size: String(size),
-					stored_at: String(warehouse),
-					description: String(description)
-				})
+				.insert({ ...form.data, cost: cost * 100, sold_price: sold_price * 100 })
 				.throwOnError();
 		} catch {
-			errors.description = 'hubo un error al momento de procesar el registro del producto';
-			return fail(400, { formData: data, errors });
+
+			return message(form, {
+				text: 'create product error',
+				type: 'error',
+				status: 403
+			});
 		}
 
-		return {
-			success: true,
-			message: 'Form submitted successfully!',
-			formData: {} as Product
-		};
+		return message(form, {
+			status: 200,
+			type: 'success',
+			text: 'product successfully added'
+		});
 	}
 } satisfies Actions;

@@ -1,164 +1,163 @@
-<!-- <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { PageData } from './$types';
+<script lang="ts">
+	import { superForm } from 'sveltekit-superforms';
 	import CheckIcon from '$lib/icons/check.icon.svelte';
-	import { enhance } from '$app/forms';
-	import { getWarehouses } from '$lib/api/getWarehouses.api';
-	import type { Warehouse } from '$lib/interfaces/warehouse.interface';
+	import Modal from '$lib/components/Modal.svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import type { Product } from '$lib/interfaces/product.interface';
+	import { goto } from '$app/navigation';
 
-	export let data: PageData;
+	let { data } = $props();
+	const { warehouses } = data;
+
+	const { form, errors, message, enhance, submitting } = superForm(data.form);
+
+	$effect(() => {
+		if ($message && $message.type == 'error') {
+			alertRef.showAlert($message.text, 'alert-error');
+		}
+	});
+
+	$effect(() => {
+		if ($message && $message.type == 'success') {
+			modalRef.openModal();
+		}
+	});
+
 	let alertRef: Alert;
-	let creating = false;
-
-	export let form;
-	$: ({ formData, errors, success } = form ?? {
-		formData: {} as Product,
-		errors: {} as Record<string, string>,
-		success: false
-	});
-
-	let warehouses: Array<Warehouse>;
-
-	onMount(async () => {
-		warehouses = (await getWarehouses(data.supabase)).data;
-	});
-
-	$: {
-		if (success && alertRef) {
-			alertRef.showAlert('producto agregado de forma exitosa', 'alert-success');
-		}
-	}
-
-	$: {
-		if (errors && alertRef && Object.keys(errors).length) {
-			const error_msg = Object.values(errors).join('\n');
-			alertRef.showAlert(error_msg, 'alert-error');
-		}
-	}
-
-	const handleSubmit = () => {
-		creating = true;
-
-		return async ({ update }: any) => {
-			await update();
-			creating = false;
-		};
-	};
+	let modalRef: Modal;
 </script>
 
 <Alert bind:this={alertRef} class="top-16 self-start" />
 
-<div
-	class="flex max-w-[700px] flex-col items-center p-4 select-none lg:m-auto lg:min-h-1/2 lg:w-1/2"
->
-	<h1 class="text-2xl font-semibold">Agregar Producto</h1>
+<Modal
+	bind:this={modalRef}
+	header="Success!"
+	content="Producto creado correctamente!"
+	button_text="Finalizar"
+	on_close={() => {
+		goto('/dashboard');
+	}}
+/>
+
+<div class="m-auto flex flex-col items-center justify-center p-2 select-none lg:h-full">
+	<h1 class="title">Agregar Producto:</h1>
+
 	<form
-		action=""
-		method="post"
-		class="m-2 flex w-[300px] flex-col items-center whitespace-nowrap"
-		use:enhance={handleSubmit}
+		method="POST"
+		use:enhance
+		class="grid w-full grid-cols-2 gap-2 p-4 lg:aspect-square lg:w-1/3"
 	>
-		<fieldset class="fieldset flex w-[100%] flex-col gap-0">
-			<legend class="fieldset-legend">costo</legend>
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
+			<legend class="fieldset-legend text-base-format">precio de venta:</legend>
 			<input
 				type="number"
 				name="cost"
-				class="input validator tabular-nums {errors?.cost ? 'valid:border-red-500' : ''}"
+				class={`input validator w-full ${$errors.cost ? '!input-error' : ''}`}
 				required
-				placeholder="coste del producto"
+				placeholder="costo"
+				step="0.1"
 				pattern="[0-9]*"
-				min="9"
-				value={formData.cost ?? 10}
-				aria-invalid={errors?.cost ? 'true' : undefined}
+				aria-invalid={$errors.cost ? 'true' : undefined}
+				bind:value={$form.cost}
 			/>
-
-			{#if errors?.cost}
-				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.cost}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
+			{#if $errors.cost}
+				<span class="text-ellipsis text-red-500">
+					{$errors.cost}
+				</span>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset w-[100%]">
-			<legend class="fieldset-legend">precio de venta</legend>
-
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
+			<legend class="fieldset-legend text-base-format">costo:</legend>
 			<input
 				type="number"
 				name="sold_price"
-				class="input validator tabular-nums {errors?.sold_price ? 'valid:border-red-500' : ''}"
+				class={`input validator w-full ${$errors.sold_price ? '!input-error' : ''}`}
 				required
 				placeholder="precio de venta"
 				pattern="[0-9]*"
-				min="9"
-				value={formData.sold_price ?? 10}
-				aria-invalid={errors?.sold_price ? 'true' : undefined}
+				step="0.1"
+				aria-invalid={$errors.sold_price ? 'true' : undefined}
+				bind:value={$form.sold_price}
 			/>
-
-			{#if errors?.sold_price}
-				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.sold_price}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
+			{#if $errors.sold_price}
+				<span class="text-ellipsis text-red-500">
+					{$errors.sold_price}
+				</span>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset w-[100%]">
-			<legend class="fieldset-legend">talla</legend>
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
+			<legend class="fieldset-legend text-base-format">talla:</legend>
 			<input
 				type="text"
 				name="size"
-				class="input validator {errors?.size ? 'valid:border-red-500' : ''}"
+				class={`input validator w-full ${$errors.size ? '!input-error' : ''}`}
 				required
 				placeholder="talla del producto"
-				pattern="[A-Za-z][A-Za-z0-9\-]*"
 				minlength="1"
-				value={formData.size ?? 'xs'}
-				aria-invalid={errors?.size ? 'true' : undefined}
+				aria-invalid={$errors.size ? 'true' : undefined}
+				bind:value={$form.size}
 			/>
-
-			{#if errors?.size}
-				<p class=" overflow-hidden text-ellipsis text-red-500">{errors.size}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
+			{#if $errors.size}
+				<span class="text-ellipsis text-red-500">
+					{$errors.size}
+				</span>
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset w-[100%]">
-			<legend class="fieldset-legend">almacen</legend>
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
+			<legend class="fieldset-legend text-base-format">etiquetas impresas:</legend>
+			<label class="label">
+				<input type="checkbox" checked={$form.printed} class="checkbox" name="printed" />
+				impreso
+			</label>
+		</fieldset>
 
-			<select class="select validator" required name="warehouse">
+		<fieldset class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4">
+			<legend class="fieldset-legend text-base-format">almacen:</legend>
+
+			<select
+				class={`select validator w-full ${$errors.stored_at ? '!select-error' : ''}`}
+				required
+				name="stored_at"
+			>
 				{#each warehouses as warehouse (warehouse.id)}
 					<option value={warehouse.id}>{warehouse.name}</option>
 				{/each}
 			</select>
-
-			<p class="validator-hint overflow-hidden text-ellipsis">debes seleccionar 1</p>
 		</fieldset>
 
-		<fieldset class="fieldset w-[100%]">
-			<legend class="fieldset-legend">descripcion del producto</legend>
+		<fieldset class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4">
+			<legend class="fieldset-legend text-base-format">descripcion del producto:</legend>
 			<textarea
 				name="description"
-				class="textarea validator {errors?.description ? 'valid:border-red-500' : ''}"
+				class={`textarea validator w-full ${$errors.description ? '!textarea-error' : ''}`}
 				placeholder="descripcion del producto"
 				required
-				value={formData.description ?? 'description'}
-				aria-invalid={errors?.size ? 'true' : undefined}
+				bind:value={$form.description}
+				aria-invalid={$errors.description ? 'true' : undefined}
 			></textarea>
-			{#if errors?.description}
-				<p class=" overflow-hidden text-wrap text-ellipsis text-red-500">{errors.description}</p>
-			{:else}
-				<p class="validator-hint overflow-hidden text-ellipsis">debes ingresar un valor</p>
+			{#if $errors.description}
+				<span class="text-ellipsis text-red-500">
+					{$errors.description}
+				</span>
 			{/if}
 		</fieldset>
 
-		{#if creating}
-			<span class="loading loading-ring loading-xl"></span>
+		{#if $submitting}
+			<span class="loader-ring col-span-2 place-self-center"></span>
 		{:else}
-			<button class="btn border border-[#e5e5e5]" type="submit">
-				<CheckIcon />
+			<button class="btn col-span-2 place-self-center" type="submit">
+				Update<CheckIcon />
 			</button>
 		{/if}
 	</form>
-</div> -->
+</div>
