@@ -1,12 +1,25 @@
+import type { Product } from '$lib/interfaces/product.interface';
+import type { Database } from '$lib/supabase/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { buildQueryFilter, type FilterCondition } from './queryBuilder';
 
-export const getProduct = async (supabase: SupabaseClient, productId: string) => {
-	const { data, error } = await supabase
-		.from('products')
-		.select('id,  description, size, sold_price, stored_at, cost')
-		.eq('id', productId)
-		.is('purchase_order_id', null)
-		.single();
+export const getProduct = async ({
+	supabase,
+	select,
+	filters
+}: {
+	supabase: SupabaseClient<Database>;
+	filters?: Array<FilterCondition<Product>>;
+	select?: Array<keyof Product>;
+}) => {
 
-	return { data, error };
+	const query = buildQueryFilter<Product>({
+		supabaseClient: supabase,
+		table: 'products',
+		select,
+		filters,
+	});
+
+	const { data, error }: { data: Product, error: unknown } = await query.single();
+	return { error, data };
 };
