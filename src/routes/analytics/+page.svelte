@@ -1,5 +1,4 @@
 <script>
-	// @ts-nocheck
 
 	import { Chart } from 'flowbite-svelte';
 

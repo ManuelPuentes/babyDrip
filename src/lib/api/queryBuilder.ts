@@ -160,13 +160,6 @@ class SupabaseFilterBuilder<T> {
 	}
 }
 
-// Example Usage
-interface Product {
-	id: string;
-	name: string;
-	price: number;
-	category: string;
-}
 type CountType = 'exact' | 'planned' | 'estimated' | undefined;
 type TableName = keyof Database['public']['Tables'];
 
@@ -183,16 +176,11 @@ export function buildQueryFilter<T>({
 	count?: CountType;
 	filters?: Array<FilterCondition<T>>;
 }) {
-	// Start with a base query
-
 	const select_statement = select?.join(',') ?? '*';
 
 	const baseQuery = supabaseClient.from(table).select(select_statement, { count });
 
-	// Apply filters
-	const query = new SupabaseFilterBuilder<T>(baseQuery).addFilters(filters).get_query(); // Get the final query
-
-	// Execute with Supabase's native methods
+	const query = new SupabaseFilterBuilder<T>(baseQuery).addFilters(filters).get_query();
 
 	return query;
 }

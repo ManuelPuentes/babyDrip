@@ -18,6 +18,8 @@
 	//utils
 	import qrvalidator from '$lib/validator/qr.validator.js';
 	import { goto } from '$app/navigation';
+	import { P } from 'flowbite-svelte';
+	import { FilterType } from '$lib/api/queryBuilder';
 
 	interface FormState {
 		errors?: any;
@@ -141,7 +143,10 @@
 			return;
 		}
 
-		const { data: product } = await getProduct(supabase, data.id);
+		const { data: product } = await getProduct({
+			supabase,
+			filters: [{ field: 'id', filter: FilterType.EQ, value: data.id }]
+		});
 
 		if (!product) {
 			alertRef.showAlert('producto no encontrado', 'alert-error');

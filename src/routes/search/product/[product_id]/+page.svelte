@@ -18,7 +18,7 @@
 
 	$effect(() => {
 		if ($message && $message.type == 'success') {
-			// modalRef.openModal();
+			modalRef.openModal();
 		}
 	});
 
@@ -31,10 +31,10 @@
 <Modal
 	bind:this={modalRef}
 	header="Success!"
-	content={`Producto actualizado correctamente!`}
+	content="Producto actualizado correctamente!"
 	button_text="Finalizar"
 	on_close={() => {
-		// goto('/dashboard');
+		goto('/dashboard');
 	}}
 />
 
