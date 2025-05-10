@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -37,7 +38,7 @@
 					<tr
 						class="hover:!bg-base-300 cursor-pointer"
 						onclick={() => {
-							console.log('Hola');
+							goto(`/search/product/${product.id}`);
 						}}
 					>
 						<td class="text-base-format">{index + 1}</td>
