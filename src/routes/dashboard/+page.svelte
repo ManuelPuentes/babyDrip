@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api.js';
 	import { FilterType } from '$lib/api/queryBuilder.js';
-	import type { Product } from '$lib/interfaces/product.interface.js';
 	import { onMount } from 'svelte';
-	import ProductsTable from './components/ProductsTable.svelte';
+	import ProductsTable from '$lib/components/ProductsTable.svelte';
 
 	let { data } = $props();
 
-	const { maxPageNumber, supabase, warehouses, products } = $state(data);
+	const { products } = $state(data);
+	const { maxPageNumber, supabase, warehouses } = data;
+
 	let pageNumber = 1;
 	let load_trigger: HTMLElement;
 	let loading: boolean = $state(false);
@@ -19,8 +20,6 @@
 		description: string;
 		stored_at: string;
 	}> = $state(products);
-
-	let numbers: Array<number> = $state([]);
 
 	onMount(async (): Promise<any> => {
 		const observer = new IntersectionObserver(
@@ -57,8 +56,6 @@
 		};
 	});
 
-	const formatNumber = (value: number) => parseFloat(String(value / 100)).toFixed(2);
-
 	const getInputValue = (event: Event) => {
 		const target = event.target as HTMLInputElement; // Cast to input element
 		return target.value;
@@ -92,6 +89,8 @@
 		filtered_products = products.filter((product) => product.stored_at == filter_value);
 	};
 </script>
+
+<h1 class="title p-2 text-center">Inventario</h1>
 
 <div class="grid grid-cols-4 gap-4 p-4">
 	<h1 class="text-base-format col-span-4">filtros:</h1>

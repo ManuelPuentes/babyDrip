@@ -6,7 +6,8 @@ export const productSchema = z
 		cost: z.number().gt(0),
 		sold_price: z.number().gt(0),
 		description: z.string().min(10),
-		stored_at: z.string().min(10)
+		stored_at: z.string().min(10),
+		printed: z.boolean().default(false)
 	})
 	.refine((data) => data.sold_price >= data.cost, {
 		message: 'Sold price must be equal to or greater than cost',

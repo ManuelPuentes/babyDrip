@@ -25,14 +25,14 @@
 	}
 </script>
 
-<div class="flex h-screen flex-col">
-	<div class="h-16">
+<div class="flex h-screen flex-col items-center">
+	<div class="h-16 w-full">
 		{#if session}
 			<Navbar {logout} />
 		{/if}
 	</div>
 
-	<div class="flex-1 overflow-auto">{@render children()}</div>
+	<div class="w-full max-w-[1920px] flex-1 overflow-auto">{@render children()}</div>
 
 	<div class="h-16 md:hidden">
 		{#if session}

@@ -44,6 +44,10 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+
+		console.log(form);
+
+
 		const { error } = await supabase
 			.from('products')
 			.update({

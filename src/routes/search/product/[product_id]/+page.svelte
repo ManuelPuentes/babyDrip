@@ -18,7 +18,7 @@
 
 	$effect(() => {
 		if ($message && $message.type == 'success') {
-			modalRef.openModal();
+			// modalRef.openModal();
 		}
 	});
 
@@ -34,13 +34,11 @@
 	content={`Producto actualizado correctamente!`}
 	button_text="Finalizar"
 	on_close={() => {
-		goto('/dashboard');
+		// goto('/dashboard');
 	}}
 />
 
-<div
-	class="flex max-w-[1920px] flex-col items-center justify-center p-2 select-none lg:h-full m-auto"
->
+<div class="m-auto flex flex-col items-center justify-center p-2 select-none lg:h-full">
 	<h1 class="title">Actualizar Producto:</h1>
 
 	<form
@@ -48,7 +46,9 @@
 		use:enhance
 		class="grid w-full grid-cols-2 gap-2 p-4 lg:aspect-square lg:w-1/3"
 	>
-		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
 			<legend class="fieldset-legend text-base-format">precio de venta:</legend>
 			<input
 				type="number"
@@ -67,7 +67,9 @@
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
 			<legend class="fieldset-legend text-base-format">costo:</legend>
 			<input
 				type="number"
@@ -86,7 +88,9 @@
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
 			<legend class="fieldset-legend text-base-format">talla:</legend>
 			<input
 				type="text"
@@ -105,7 +109,17 @@
 			{/if}
 		</fieldset>
 
-		<fieldset class="fieldset col-span-2 w-full lg:col-span-1">
+		<fieldset
+			class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4 lg:col-span-1"
+		>
+			<legend class="fieldset-legend text-base-format">etiquetas impresas:</legend>
+			<label class="label">
+				<input type="checkbox" checked={$form.printed} class="checkbox" name="printed" />
+				impreso
+			</label>
+		</fieldset>
+
+		<fieldset class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4">
 			<legend class="fieldset-legend text-base-format">almacen:</legend>
 
 			<select
@@ -123,7 +137,7 @@
 			</select>
 		</fieldset>
 
-		<fieldset class="fieldset col-span-2 w-full">
+		<fieldset class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4">
 			<legend class="fieldset-legend text-base-format">descripcion del producto:</legend>
 			<textarea
 				name="description"
