@@ -18,10 +18,13 @@ declare global {
 		// interface Platform {}
 		namespace Superforms {
 			type Message = {
-				type: 'error' | 'success', text: string, status:number
-			}
+				type: 'error' | 'success';
+				text: string;
+				status: number;
+				data?: any;
+			};
 		}
 	}
 }
 
-export { };
+export {};

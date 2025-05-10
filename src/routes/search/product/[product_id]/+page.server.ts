@@ -8,11 +8,10 @@ import { productSchema } from '$lib/schemas/productSchema';
 import { FilterType } from '$lib/api/queryBuilder.js';
 
 export const load = async ({ params, locals: { supabase } }) => {
-
 	const { data: product } = await getProduct({
 		supabase,
 		select: ['id', 'cost', 'sold_price', 'stored_at', 'description', 'size'],
-		filters: [{ field: 'id', filter: FilterType.EQ, value: params.product_id }],
+		filters: [{ field: 'id', filter: FilterType.EQ, value: params.product_id }]
 	});
 
 	const { data: warehouses } = await getWarehouses({
@@ -20,7 +19,6 @@ export const load = async ({ params, locals: { supabase } }) => {
 	});
 
 	if (!product) throw error(404, { message: 'product not found' });
-
 
 	const form = await superValidate(product, zod(productSchema));
 
@@ -32,7 +30,6 @@ export const actions = {
 		const form = await superValidate(request, zod(productSchema));
 
 		if (!params.product_id) {
-
 			return message(form, {
 				text: 'invalid request cannot update uknown product',
 				type: 'error',
@@ -44,9 +41,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-
 		console.log(form);
-
 
 		const { error } = await supabase
 			.from('products')
@@ -55,7 +50,6 @@ export const actions = {
 				updated_at: new Date().toISOString()
 			})
 			.eq('id', params.product_id);
-
 
 		if (error) {
 			return message(form, {
@@ -71,4 +65,4 @@ export const actions = {
 			text: 'product successfully updated'
 		});
 	}
-} satisfies Actions; 
+} satisfies Actions;

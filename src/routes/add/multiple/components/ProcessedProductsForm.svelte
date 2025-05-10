@@ -73,7 +73,7 @@
 	}}
 />
 
-<h1 class="w-fit text-2xl font-semibold">Processed products</h1>
+<h1 class="title p-4">Processed products:</h1>
 
 <form
 	action="?/save_data"
@@ -81,6 +81,7 @@
 	enctype="multipart/form-data"
 	use:enhance={handleSubmit}
 	class="flex flex-col gap-2"
+	id="savbe_data_form"
 >
 	<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
 		{#each formated_products as element, index (index)}

@@ -7,22 +7,18 @@ import { getWarehouse } from '$lib/api/getWarehouse.api';
 import { getProductsPaginatedData } from '$lib/api/getProductsPaginated.api';
 
 export const load = async ({ params, locals: { supabase } }) => {
-
 	const { data: warehouse } = await getWarehouse({
 		supabase,
-		filters: [
-			{ field: 'id', filter: FilterType.EQ, value: params.warehouse_id }
-		]
+		filters: [{ field: 'id', filter: FilterType.EQ, value: params.warehouse_id }]
 	});
 
 	if (!warehouse) throw error(404, { message: 'warehouse not found' });
-
 
 	const { count: products_count, data: products } = await getProductsPaginatedData({
 		supabase,
 		filters: [
 			{ field: 'purchase_order_id', filter: FilterType.IS, value: null },
-			{ field: 'stored_at', filter: FilterType.EQ, value: warehouse.id },
+			{ field: 'stored_at', filter: FilterType.EQ, value: warehouse.id }
 		],
 		select: ['id', 'cost', 'sold_price', 'size', 'description', 'stored_at'],
 		pageNumber: 0
@@ -49,4 +45,3 @@ export const load = async ({ params, locals: { supabase } }) => {
 		pageSize: number;
 	};
 };
-

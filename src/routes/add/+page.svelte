@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import CheckIcon from '$lib/icons/check.icon.svelte';
@@ -161,4 +161,4 @@
 			</button>
 		{/if}
 	</form>
-</div>
+</div> -->

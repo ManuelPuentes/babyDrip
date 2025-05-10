@@ -12,14 +12,13 @@ export const getWarehouse = async ({
 	filters?: Array<FilterCondition<Warehouse>>;
 	select?: Array<keyof Warehouse>;
 }) => {
-
 	const query = buildQueryFilter<Warehouse>({
 		supabaseClient: supabase,
 		table: 'warehouse',
 		select,
-		filters,
+		filters
 	});
 
-	const { data, error }: { data: Warehouse, error: unknown } = await query.single();
+	const { data, error }: { data: Warehouse; error: any } = await query.single();
 	return { error, data };
 };
