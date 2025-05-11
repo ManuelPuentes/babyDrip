@@ -2,55 +2,49 @@ import { createClient } from '$lib/api/createClient.api';
 import type { Client } from '$lib/interfaces/client.interface';
 import type { Database } from '$lib/supabase/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { getClient } from '$lib/api/getClient.api';
+import { message, superValidate } from 'sveltekit-superforms';
+import { clientSchema } from '$lib/schemas/clientSchema';
+import { zod } from 'sveltekit-superforms/adapters';
+import { FilterType } from '$lib/api/queryBuilder';
 
-export const load = async () => {};
+export const load = async () => {
+	const form = await superValidate(zod(clientSchema));
+	return { form };
+};
 
 export const actions: Actions = {
 	default: async ({ request, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const data = Object.fromEntries(formData) as { name: string; lastname: string; phone: string };
-		const errors: Record<string, string> = {};
+		const form = await superValidate(request, zod(clientSchema));
 
-		const { name, lastname, phone } = data;
-
-		if (!isAlphaNumeric(String(name))) errors.name = 'invalid name';
-
-		if (!isAlphaNumeric(String(lastname))) errors.lastname = 'invalid lastname';
-
-		if (!isValidPhoneNumber(String(phone))) errors.phone = 'invalid phone number';
-
-		if (Object.keys(errors).length > 0) {
-			return fail(400, { formData: data, errors });
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
-		const client = await ensureClientExist(supabase, {
-			name: String(name),
-			lastname: String(lastname),
-			phone: String(phone)
+		const { phone, lastname, name } = form.data;
+
+		const { data: client } = await ((lastname && name) ?
+			createClient(supabase, { lastname, name, phone })
+			: getClient({
+				supabase,
+				filters: [
+					{ field: 'phone', filter: FilterType.EQ, value: phone }
+				]
+			}))
+
+		if (!client) {
+			form.errors.phone = ['client not found']
+			return fail(400, { form });
+		}
+
+		return message(form, {
+			type: 'success',
+			status: 200,
+			text: 'client created successfully',
+			data: client
 		});
 
-		if (!client) return fail(400);
-
-		throw redirect(303, `sell/${String(client.id)}`);
 	}
 } satisfies Actions;
 
-function isAlphaNumeric(str: string) {
-	return /^[a-zA-Z0-9]+$/.test(str);
-}
-
-function isValidPhoneNumber(phone: string) {
-	return /^\+?[\d\s-]{10,15}$/.test(phone);
-}
-
-const ensureClientExist = async (supabase: SupabaseClient<Database>, client: Client) => {
-	const { client: _client } = await getClient(supabase, client);
-
-	if (_client) return _client;
-
-	const { client: _newClient } = await createClient(supabase, client);
-
-	return _newClient;
-};

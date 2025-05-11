@@ -13,5 +13,5 @@ export const createClient = async (supabase: SupabaseClient<Database>, client: C
 		.select()
 		.single();
 
-	return { client: data, error };
+	return { data, error };
 };

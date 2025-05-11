@@ -51,28 +51,33 @@
 </script>
 
 <Alert bind:this={alertRef} class="top-16 self-start" />
-
-<div class="m-auto flex h-screen flex-col items-center">
+<div class="flex min-h-full flex-col items-center justify-center p-2 select-none">
+	<h1 class="title">Imprimir Qr:</h1>
 	<img src={data.qr} alt="exmaple qr fun hidden message" class="w-[200px]" />
 
-	<p class="w-4/5 text-center text-xs">
+	<p class="text-base-format w-fit text-center">
 		Selecciona el tipo de Qr que quieres generar y da clik en descargar
 	</p>
 
 	<form method="post" class="m-2 flex w-[300px] flex-col gap-4">
-		<select class="select validator" required name="qr_type" bind:value={qr_type}>
-			<option value="products">products</option>
-			<option value="warehouse">warehouse</option>
-		</select>
+		<fieldset class="fieldset border-base-300 rounded-box col-span-2 w-full border p-4">
+			<legend class="fieldset-legend text-base-format">qr type:</legend>
+			<select class="select validator" required name="qr_type" bind:value={qr_type}>
+				<option value="products">products</option>
+				<option value="warehouse">warehouse</option>
+			</select>
 
-		{#if qr_type}
-			{#if creating}
-				<span class="loading loading-ring loading-xl self-center"></span>
-			{:else}
-				<button type="button" class="btn self-center border border-[#e5e5e5]" on:click={downloadPDF}
-					>download {qr_type} QR <QrIcon /></button
-				>
+			{#if qr_type}
+				{#if creating}
+					<span class="loading loading-ring loading-xl self-center"></span>
+				{:else}
+					<button
+						type="button"
+						class="btn self-center border border-[#e5e5e5]"
+						on:click={downloadPDF}>download {qr_type} QR <QrIcon /></button
+					>
+				{/if}
 			{/if}
-		{/if}
+		</fieldset>
 	</form>
 </div>

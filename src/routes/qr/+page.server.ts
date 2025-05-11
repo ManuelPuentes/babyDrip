@@ -9,7 +9,7 @@ async function generateQR(content: string) {
 		return await QRCode.toDataURL(content, {
 			width: 150 * 2,
 			// margin: 10,
-			color: { dark: '#000000', light: '#ffffff' }
+			color: { dark: '#000000', light: '#eceff4' }
 		});
 	} catch (err) {
 		console.error('Error generando QR:', err);
